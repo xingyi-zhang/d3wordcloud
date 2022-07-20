@@ -22,7 +22,8 @@ function cloud(d3) {
         timer = null,
         overflow = false,
         random = Math.random,
-        cloud = {};
+        cloud = {},
+        targetLocation = [];
 
     
     //position, the placement of targets     
@@ -43,7 +44,7 @@ function cloud(d3) {
             return d;
           }); //deleted .sort(function(a, b) { return b.size - a.size; })
 
-      placeTarget([8,170,25,380])
+      placeTarget(targets)
 
       if (timer) clearInterval(timer);
       timer = setInterval(step, 0);
@@ -52,16 +53,24 @@ function cloud(d3) {
       return cloud;
 
       // place target word in desired location 
-      function placeTarget(testbound) {
-        for (var ii=0; ii<2; ii++){
-          for (var j = testbound[0+ii*2]; j<testbound[0+ii*2]+3; j++){
-            for (var k = testbound[1+ii*2]; k < testbound[1+ii*2]+28; k++) {
-              board[k*31 + j] = 0x7FFFFFFF
+      // to be adjusted: 28,20,2 - along with size 
+      function placeTarget(target) {
+        for (var ii=0; ii<target.length; ii++){
+          console.log(target)
+          var targ = target[ii]
+          var corr_x = ~~(targ.x/size[0] * (size[0]>>5))-1
+          var corr_y = targ.y -20
+
+          // leave blanks for target word 
+          for (var j = corr_x; j<corr_x+3; j++){
+            for (var k = corr_y; k < corr_y+28; k++) {
+              board[k*(size[0]>>5) + j] = 0x7FFFFFFF
             }
           }
-          var targ = data[ii]
-          targ.x = ~~((testbound[0+ii*2]+1.5)/31*1000) -500
-          targ.y = testbound[1+ii*2]+14-250
+          // targ.x = ~~((testbound[0+ii*2]+1)/(size[0]>>5)*size[0]) -(size[0]>>1)
+          // targ.y = testbound[1+ii*2]+20-(size[1]>>1)
+          targ.x = targ.x -(size[0]>>1)
+          targ.y = targ.y -(size[1]>>1)
           tags.push(targ);
           event.word(targ);
         }
@@ -69,13 +78,12 @@ function cloud(d3) {
 
       function step() {
         var start = Date.now();
-        var posi = [400,400, 900,200]
         while (Date.now() - start < timeInterval && ++i < n && timer) {
           var d = data[i];
-          //d.x = (size[0] * (random() + .5)) >> 1;
-          //d.y = (size[1] * (random() + .5)) >> 1;
-		      d.x = size[0] * .5
-		      d.y = size[1] * .5
+          d.x = (size[0] * (random() + .5)) >> 1;
+          d.y = (size[1] * (random() + .5)) >> 1;
+		      // d.x = size[0] * .5 
+		      // d.y = size[1] * .5
           cloudSprite(d, data, i);
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d);
@@ -108,8 +116,7 @@ function cloud(d3) {
           startY = tag.y,
           maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
           s = spiral(size),
-          //dt = random() < .5 ? 1 : -1,
-          dt = 1,
+          dt = random() < .5 ? 1 : -1,
           t = -dt,
           dxdy,
           dx,
@@ -155,6 +162,10 @@ function cloud(d3) {
       }
       return false;
     }
+
+    cloud.targets = function (_)  {
+      return arguments.length ? (targets = _, cloud) : targets;
+    };
 
     cloud.timeInterval = function(_) {
       return arguments.length ? (timeInterval = _ == null ? Infinity : _, cloud) : timeInterval;

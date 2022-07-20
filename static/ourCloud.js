@@ -2,20 +2,26 @@ distractor_text = ['roman', 'menus', 'more', 'oeuvre', 'mere', 'excess', 'cam', 
 target_text = ['test_1','test_2']
 
 target_stim = target_text.map(function(d) {
-  return {text: d, size: 20, fill: 'black'};
+  return {text: d, size: 20, fill: 'black', x:0, y:0, rotate: 0};
 })
 
 distractor_stim = distractor_text.map(function(d) {
   return {text: d, size: 13 + Math.random() * 15, fill: 'gray'};
 })
 
-words = target_stim.concat(distractor_stim);
+target_stim[0].x = 300
+target_stim[0].y = 170
+target_stim[1].x = 800
+target_stim[1].y = 380
+
+words = distractor_stim
 
 var a = d3.select('svg');
 
 var layout = d3.layout.cloud()
   .size([1000, 500])
   .words(words)
+  .targets(target_stim)
   .padding(4)
   .rotate(0)
   .font("Impact")
