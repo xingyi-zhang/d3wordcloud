@@ -24,12 +24,13 @@ function cloud(d3) {
         random = Math.random,
         cloud = {};
 
+    
     //position, the placement of targets     
     cloud.start = function() {
       var board = zeroArray((size[0] >> 5) * size[1]),
           bounds = null,
           n = words.length,
-          i = -1,
+          i = 1,
           tags = [],
           data = words.map(function(d, i) {
             d.text = text.call(this, d, i);
@@ -42,33 +43,42 @@ function cloud(d3) {
             return d;
           }); //deleted .sort(function(a, b) { return b.size - a.size; })
 
+      placeTarget([8,170,25,380])
+
       if (timer) clearInterval(timer);
       timer = setInterval(step, 0);
       step();
 
       return cloud;
 
+      // place target word in desired location 
+      function placeTarget(testbound) {
+        for (var ii=0; ii<2; ii++){
+          for (var j = testbound[0+ii*2]; j<testbound[0+ii*2]+3; j++){
+            for (var k = testbound[1+ii*2]; k < testbound[1+ii*2]+28; k++) {
+              board[k*31 + j] = 0x7FFFFFFF
+            }
+          }
+          var targ = data[ii]
+          targ.x = ~~((testbound[0+ii*2]+1.5)/31*1000) -500
+          targ.y = testbound[1+ii*2]+14-250
+          tags.push(targ);
+          event.word(targ);
+        }
+      }
+
       function step() {
         var start = Date.now();
         var posi = [400,400, 900,200]
         while (Date.now() - start < timeInterval && ++i < n && timer) {
           var d = data[i];
-          
-          //place the target in a desired position
-          if (i<2) {
-            d.x =posi[i*2]
-            d.y = posi[i*2+1]
-            console.log(d)
-          } else {
           //d.x = (size[0] * (random() + .5)) >> 1;
           //d.y = (size[1] * (random() + .5)) >> 1;
 		      d.x = size[0] * .5
 		      d.y = size[1] * .5
-          }
           cloudSprite(d, data, i);
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d);
-            console.log(tags)
             event.word(d);
             if (bounds) cloudBounds(bounds, d);
             else bounds = [{x: d.x + d.x0, y: d.y + d.y0}, {x: d.x + d.x1, y: d.y + d.y1}];

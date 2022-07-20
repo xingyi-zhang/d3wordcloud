@@ -10,7 +10,6 @@ distractor_stim = distractor_text.map(function(d) {
 })
 
 words = target_stim.concat(distractor_stim);
-console.log(words)
 
 var a = d3.select('svg');
 
