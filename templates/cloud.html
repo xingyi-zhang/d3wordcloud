@@ -8,8 +8,18 @@
 	<div id="cloudSVG">
     <svg></svg>
 	</div>
+  <!-- <script type="text/javascript" src="{{ url_for("static", filename="word_generator.js") }}"></script> -->
+  <script>
+    var distractor_fill = '{{ dis_fill }}'
+    var dis_size_config = [10,40,20,18]
+    var target_size = [20,20]
+    var target_text = ['test_1','test_2']
+    var target_posi= '{{ posi }}'
+    console.log(target_posi)
+    var font_type = "Times New Roman"
+    var distractor_text = ['roman', 'menus', 'more', 'oeuvre', 'mere', 'excess', 'cam', 'cream', 'mercer', 'maneuver', 'moron', 'amazes', 'serene', 's.c', 'maneuver', 'cocoa', 'worse', 'museums', 'accuse', 'ceases', 'cosmos', 'susan', 'mar', 'sum', 'manners', 'nuance', 'newness', 'anew', 'recesses', 'noon', 'wan', 'seas', 'macon', 'nuance', 'sewer', 'ceases', 'wares', 'mover', 'vancouver', 'vera', 'mere', 'ammo', 'vernon', 'see', 'mona', 'courses', 'seen', 'maze', 'were', 'movers', 'mar', 'raccoon', 'wove', 'war', 'conan', 'ensure', 'vows', 'concur', 'cannons', 'cancer', 'waco', 'swarms', 'exxon', 'moron', 'curses', 'removes', 'mere', 'census', 'verse', 'sew', 'mess', 'roars', 'una', 'norm', 'moons', 'wearer', 'murmur', 'excuse', 'murmur', 'nora', 'murmur', 'morrow', 'now', 'excuse', 'season', 'concur', 'nonsense', 'non', 'erroneous', 'mucus', 'resource', 'recesses', 'access', 'means', 'crowe', 'soccer', 'mormon', 'renounce', 'crossover', 'accuses','now', 'scene', 'oscar', 'successors', 'nerve', 'worm', 'amorous', 'exxon', 'moves', 'scans', 'woven', 'swore', 'seams', 'eva', 'canvases', 'season', 'mass', 'newcomer', 'muse', 'ensures', 'won', 'mere', 'mcnamara', 'measures', 'sooner', 'sores', 'roars', 'scans', 'sums', 'coroner', 'move', 'excess', 'unesco', 'acumen', 'none', 'seas', 'measures', 'assumes', 'vera', 'usc', 'oversaw', 'seam']
 
-	<!--<script type="text/javascript" src="{{ url_for("static", filename="force.js") }}"></script>-->
+  </script>
   <script type="text/javascript" src="{{ url_for("static", filename="d3.layout.cloud.js") }}"></script>
   <script type="text/javascript" src="{{ url_for("static", filename="ourCloud.js") }}"></script>
 </body>

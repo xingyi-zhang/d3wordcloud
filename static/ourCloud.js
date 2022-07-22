@@ -1,30 +1,20 @@
-distractor_text = ['roman', 'menus', 'more', 'oeuvre', 'mere', 'excess', 'cam', 'cream', 'mercer', 'maneuver', 'moron', 'amazes', 'serene', 's.c', 'maneuver', 'cocoa', 'worse', 'museums', 'accuse', 'ceases', 'cosmos', 'susan', 'mar', 'sum', 'manners', 'nuance', 'newness', 'anew', 'recesses', 'noon', 'wan', 'seas', 'macon', 'nuance', 'sewer', 'ceases', 'wares', 'mover', 'vancouver', 'vera', 'mere', 'ammo', 'vernon', 'see', 'mona', 'courses', 'seen', 'maze', 'were', 'movers', 'mar', 'raccoon', 'wove', 'war', 'conan', 'ensure', 'vows', 'concur', 'cannons', 'cancer', 'waco', 'swarms', 'exxon', 'moron', 'curses', 'removes', 'mere', 'census', 'verse', 'sew', 'mess', 'roars', 'una', 'norm', 'moons', 'wearer', 'murmur', 'excuse', 'murmur', 'nora', 'murmur', 'morrow', 'now', 'excuse', 'season', 'concur', 'nonsense', 'non', 'erroneous', 'mucus', 'resource', 'recesses', 'access', 'means', 'crowe', 'soccer', 'mormon', 'renounce', 'crossover', 'accuses','now', 'scene', 'oscar', 'successors', 'nerve', 'worm', 'amorous', 'exxon', 'moves', 'scans', 'woven', 'swore', 'seams', 'eva', 'canvases', 'season', 'mass', 'newcomer', 'muse', 'ensures', 'won', 'mere', 'mcnamara', 'measures', 'sooner', 'sores', 'roars', 'scans', 'sums', 'coroner', 'move', 'excess', 'unesco', 'acumen', 'none', 'seas', 'measures', 'assumes', 'vera', 'usc', 'oversaw', 'seam', 'move', 'sewer', 'across', 'moves', 'marco', 'racer', 'execs', 'cow', 'usa', 'cruz', 'masse', 'users', 'screw', 'exec', 'crews', 'versa', 'overcame', 'nassau', 'carr', 'sorrow', 'manor', 'scares', 'armor', 'waves', 'eva', 'row', 'mourn', 'news', 'u.s.a', 'wes', 'vance', 'una', 'convene', 'overseen', 'acumen', 'senses', 'anna', 'newcomer', 'woman', 'smear', 'mascara', 'noon', 'wears', 'monaco', 'snows', 'wearer', 'warmer', 'venues', 'suarez', 'scarce', 'evan', 'sorrows', 'sonoma', 'oeuvre', 'successes', 'summons', 'screws', 'corner']
-target_text = ['test_1','test_2']
-
-target_stim = target_text.map(function(d) {
-  return {text: d, size: 20, fill: 'black', x:0, y:0, rotate: 0};
+target_stim = target_text.map(function(d,i) {
+  return {text: d, size: target_size[i], fill: 'black', x: target_posi[i].x, y:target_posi[i].y, rotate: 0};
 })
 
 distractor_stim = distractor_text.map(function(d) {
-  return {text: d, size: 13 + Math.random() * 15, fill: 'gray'};
+  return {text: d, size: getDistractorSize(dis_size_config), fill: distractor_fill};
 })
-
-target_stim[0].x = 300
-target_stim[0].y = 170
-target_stim[1].x = 800
-target_stim[1].y = 380
-
-words = distractor_stim
 
 var a = d3.select('svg');
 
 var layout = d3.layout.cloud()
-  .size([1000, 500])
-  .words(words)
+  .size([400, 400])
+  .words(distractor_stim)
   .targets(target_stim)
   .padding(4)
   .rotate(0)
-  .font("Impact")
+  .font(font_type)
   .fontSize(d => d.size)
   .on("end", draw);
 
@@ -45,9 +35,37 @@ function draw(words) {
     .enter()
     .append("text")
     .style("font-size", d => `${d.size}px`)
-    .style("font-family", "serif")
+    .style("font-family", font_type)
     .attr("text-anchor", "middle")
     .attr("transform", d => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
     .attr("fill", d => d.fill)
     .text(d => d.text);
 }
+
+//the config array is [min,max,mean,sd]
+function getDistractorSize(size_config){
+  var size = 0
+  do {
+    size = randomGaussian(size_config[2],size_config[3])
+  } while (size <size_config[0] || size >size_config[1])
+  return ~~size
+}
+
+// SOURCE: http://www.ollysco.de/2012/04/gaussian-normal-functions-in-javascript.html
+function randomGaussian(mean, standardDeviation) {
+  if (randomGaussian.nextGaussian !== undefined) {
+      var nextGaussian = randomGaussian.nextGaussian;
+      delete randomGaussian.nextGaussian;
+      return (nextGaussian * standardDeviation) + mean;
+  } else {
+      var v1, v2, s, multiplier;
+      do {
+          v1 = 2 * Math.random() - 1; // between -1 and 1
+          v2 = 2 * Math.random() - 1; // between -1 and 1
+          s = v1 * v1 + v2 * v2;
+      } while (s >= 1 || s == 0);
+      multiplier = Math.sqrt(-2 * Math.log(s) / s);
+      randomGaussian.nextGaussian = v2 * multiplier;
+      return (v1 * multiplier * standardDeviation) + mean;
+  }
+};
