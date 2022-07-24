@@ -14,7 +14,8 @@ def test_text():
 
 @app.route('/cloud/')
 def cloud():
-    return render_template('cloud.html',dis_fill = "#bdbdbd",posi = jsonify(config.get_target_position(1)))
+    print(config.get_targ_text())
+    return render_template('cloud.html',dis_fill = config.get_dis_fill(),posi = json.dumps(config.get_target_position(1)), dis_size = config.get_dis_size_config(), targ_size = config.get_targ_size(),font_type = config.get_font_type())
 
 
 def get_targ_config(posi):

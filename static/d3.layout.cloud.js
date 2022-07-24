@@ -53,26 +53,26 @@ function cloud(d3) {
       return cloud;
 
       // place target word in desired location 
-      // to be adjusted: 28,20,2 - along with size 
       function placeTarget(target) {
         for (var ii=0; ii<target.length; ii++){
           var targ = target[ii]
-          var corr_x = ~~(targ.x/size[0] * (size[0]>>5))-1
-          var corr_y = targ.y -20
-
+          c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
+          c.save();
+          c.font = data[0].style + " " + data[0].weight + " " + ~~((targ.size + 1) / ratio) + "px " + data[0].font;
+          bound = c.measureText(targ.text + "m")
+          rw = size[0]>>5  // ratio of width
+          xs = ~~((targ.x-bound.width/2)/size[0] * rw)  // x starting point
+          xoff = ~~(32 - ((targ.x-bound.width/2) % 32 ))
           // leave blanks for target word 
-          //for (var j = corr_x; j<corr_x+3; j++){
-            for (var k = corr_y; k < corr_y+30; k++) {
-              //board[k*(size[0]>>5) + j] = 0x7FFFFFFF
-              board[k*(size[0]>>5) + corr_x]  = 0b0000000000000000001111111111111
-              board[k*(size[0]>>5) + corr_x+1] =0b1111111111111111111111111111111
-              board[k*(size[0]>>5) + corr_x+2] =0b1111111111111111111111111111111
-              board[k*(size[0]>>5) + corr_x+3] =0b1111111111110000000000000000000
-
+          for (var k = targ.y-bound.fontBoundingBoxAscent; k < targ.y+bound.fontBoundingBoxDescent; k++) {
+            board[k*rw+ xs ]  = 2 << xoff
+            i = 1
+            while ((bound.width - xoff) > i*32){
+              board[k*rw+ xs+i] =0x7FFFFFFF
+              i++
             }
-          //}
-          // targ.x = ~~((testbound[0+ii*2]+1)/(size[0]>>5)*size[0]) -(size[0]>>1)
-          // targ.y = testbound[1+ii*2]+20-(size[1]>>1)
+            board[k*rw + xs+i] =0x7FFFFFFF - 2 <<(bound.width - i*32 - xoff)
+          }          
           targ.x = targ.x -(size[0]>>1)
           targ.y = targ.y -(size[1]>>1)
           tags.push(targ);
@@ -80,40 +80,12 @@ function cloud(d3) {
         }
       }
 
-      // c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
-      // d = data[di];
-      // c.save();
-      // c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
-      // w = c.measureText(d.text + "m").width * ratio,
-      // h = d.size << 1;
-      // w = (w + 0x1f) >> 5 << 5;
-      // d.width = w;
-      //       d.height = h;
-      
-      // w = tag.width >> 5,
-      //                 sw = size[0] >> 5,
-      //                 lx = tag.x - (w << 4),
-      //                 sx = lx & 0x7f,
-      //                 msx = 32 - sx,
-      //                 h = tag.y1 - tag.y0,
-      //                 x = (tag.y + tag.y0) * sw + (lx >> 5),
-      //                 last;
-      //             for (var j = 0; j < h; j++) {
-      //               last = 0;
-      //               for (var i = 0; i <= w; i++) {
-      //                 board[x + i] |= (last << msx) | (i < w ? (last = sprite[j * w + i]) >>> sx : 0);
-      //               }
-      //               x += sw;
-      //             }
-
       function step() {
         var start = Date.now();
         while (Date.now() - start < timeInterval && ++i < n && timer) {
           var d = data[i];
           d.x = (size[0] * (random() + .5)) >> 1;
           d.y = (size[1] * (random() + .5)) >> 1;
-		      // d.x = size[0] * .5 
-		      // d.y = size[1] * .5
           cloudSprite(d, data, i);
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d);
@@ -185,7 +157,7 @@ function cloud(d3) {
               }
               x += sw;
             }
-            //delete tag.sprite;
+            delete tag.sprite;
             return true;
           }
         }
@@ -286,7 +258,7 @@ function cloud(d3) {
     var x = 0,
         y = 0,
         maxh = 0,
-        n = data.length;
+        n = data.length;   
     --di;
     while (++di < n) {
       d = data[di];
