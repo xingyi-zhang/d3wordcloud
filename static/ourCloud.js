@@ -1,15 +1,7 @@
-target_stim = target_text.map(function(d,i) {
-  return {text: d, size: target_size[i], fill: 'black', x: target_posi[i].x, y:target_posi[i].y, rotate: 0};
-})
-
-distractor_stim = distractor_text.map(function(d) {
-  return {text: d, size: getDistractorSize(dis_size_config), fill: distractor_fill};
-})
-
 var a = d3.select('svg');
 
 var layout = d3.layout.cloud()
-  .size([400, 400])
+  .size([512, 512])   // for now has to be the power of 2 due to the rounding issue in d3.layout.cloud 
   .words(distractor_stim)
   .targets(target_stim)
   .padding(4)
@@ -41,31 +33,3 @@ function draw(words) {
     .attr("fill", d => d.fill)
     .text(d => d.text);
 }
-
-//the config array is [min,max,mean,sd]
-function getDistractorSize(size_config){
-  var size = 0
-  do {
-    size = randomGaussian(size_config[2],size_config[3])
-  } while (size <size_config[0] || size >size_config[1])
-  return ~~size
-}
-
-// SOURCE: http://www.ollysco.de/2012/04/gaussian-normal-functions-in-javascript.html
-function randomGaussian(mean, standardDeviation) {
-  if (randomGaussian.nextGaussian !== undefined) {
-      var nextGaussian = randomGaussian.nextGaussian;
-      delete randomGaussian.nextGaussian;
-      return (nextGaussian * standardDeviation) + mean;
-  } else {
-      var v1, v2, s, multiplier;
-      do {
-          v1 = 2 * Math.random() - 1; // between -1 and 1
-          v2 = 2 * Math.random() - 1; // between -1 and 1
-          s = v1 * v1 + v2 * v2;
-      } while (s >= 1 || s == 0);
-      multiplier = Math.sqrt(-2 * Math.log(s) / s);
-      randomGaussian.nextGaussian = v2 * multiplier;
-      return (v1 * multiplier * standardDeviation) + mean;
-  }
-};

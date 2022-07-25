@@ -60,18 +60,21 @@ function cloud(d3) {
           c.save();
           c.font = data[0].style + " " + data[0].weight + " " + ~~((targ.size + 1) / ratio) + "px " + data[0].font;
           bound = c.measureText(targ.text + "m")
-          rw = size[0]>>5  // ratio of width
-          xs = ~~((targ.x-bound.width/2)/size[0] * rw)  // x starting point
-          xoff = ~~(32 - ((targ.x-bound.width/2) % 32 ))
-          // leave blanks for target word 
-          for (var k = targ.y-bound.fontBoundingBoxAscent; k < targ.y+bound.fontBoundingBoxDescent; k++) {
-            board[k*rw+ xs ]  = 2 << xoff
+          rw = size[0]>>5  // ratio of width -- how many numbers[boxes] are there in one row of the board
+          xs = Math.floor((targ.x-bound.actualBoundingBoxLeft)/size[0] * rw)  // x starting point
+          xoff = Math.ceil(32 - ((targ.x-bound.actualBoundingBoxLeft) % 32 ))  // how many pixels are taken by the first unfull box of the word
+          // leave blanks for target word
+          // divided into three parts: unfull left, full middle, unfull right
+          y_up = Math.floor(targ.y-bound.actualBoundingBoxAscent) -1 // upper bound of y. add one to avoid collision
+          y_down = Math.ceil(targ.y+bound.actualBoundingBoxDescent) + 1 //lower bound of y
+          for (var k = y_up; k < y_down; k++) {
+            board[k*rw+ xs ]  = 1 << xoff -1
             i = 1
             while ((bound.width - xoff) > i*32){
               board[k*rw+ xs+i] =0x7FFFFFFF
               i++
             }
-            board[k*rw + xs+i] =0x7FFFFFFF - 2 <<(bound.width - i*32 - xoff)
+            board[k*rw + xs+i] =0x7FFFFFFF - (1 <<(bound.width - (i-1)*32 - xoff -1)) 
           }          
           targ.x = targ.x -(size[0]>>1)
           targ.y = targ.y -(size[1]>>1)
