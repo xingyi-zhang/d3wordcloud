@@ -30,7 +30,7 @@ function cloud(d3) {
     cloud.start = function() {
       var board = zeroArray((size[0] >> 5) * size[1]),
           bounds = null,
-          n = words.length,
+          n = distractor_num+3,
           i = 1,
           tags = [],
           data = words.map(function(d, i) {

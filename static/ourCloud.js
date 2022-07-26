@@ -32,4 +32,18 @@ function draw(words) {
     .attr("transform", d => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
     .attr("fill", d => d.fill)
     .text(d => d.text);
+    data_to_return = {'trial':trial, 'stim':a.html()} 
+
+    $.ajax({
+      type: 'POST',
+      url: 'http://127.0.0.1:5000/post_stim',
+      data: JSON.stringify(data_to_return),
+      contentType: "application/json",
+      success: function (response) {
+          window.location.href = 'http://127.0.0.1:5000/cloud/'+(trial+1) +'/'
+      },
+      error: function (error) {
+          alert('error saving data');
+      }
+  });
 }

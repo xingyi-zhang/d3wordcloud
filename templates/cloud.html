@@ -8,12 +8,13 @@
 	<div id="cloudSVG">
     <svg></svg>
 	</div>
-  <!-- <script type="text/javascript" src="{{ url_for("static", filename="word_generator.js") }}"></script> -->
+  <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
   <script>
     var font_type = '{{font_type}}'
     var distractor_stim = {{distractors | safe}}
     var target_stim = {{targets | safe}}
-
+    var distractor_num = {{ dis_num }}
+    var trial = {{trial_num}}
   </script>
   <script type="text/javascript" src="{{ url_for("static", filename="d3.layout.cloud.js") }}"></script>
   <script type="text/javascript" src="{{ url_for("static", filename="ourCloud.js") }}"></script>

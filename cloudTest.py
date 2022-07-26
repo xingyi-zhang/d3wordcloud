@@ -1,7 +1,7 @@
-from itertools import count
-from flask import Flask, render_template, jsonify, json
+import dataclasses
+import flask
+from flask import Flask, render_template, json
 import random
-import csv
 import math
 from Configures import config
 app = Flask(__name__)
@@ -14,10 +14,23 @@ def hello_world():
 def test_text():
     return 'Testing 1 2 4. "Three sir!" 3!'
 
-@app.route('/cloud/')
-def cloud():
-    print(config.get_targ_text())
-    return render_template('cloud.html',targets = json.dumps(get_target(2)), distractors = json.dumps(get_distractor(100)),font_type = config.get_font_type())
+@app.route('/start')
+def start_generate():
+    return flask.redirect(flask.url_for('cloud',trial=1))
+
+@app.route('/cloud/<trial>/')
+def cloud(trial):
+    if int(trial) > 71:
+        return 'done'
+    return render_template('cloud.html',trial_num = trial, targets = json.dumps(get_target(2,int(trial))), distractors = json.dumps(get_distractor(100)),dis_num = config.get_dis_num(), font_type = config.get_font_type())
+
+@app.route('/post_stim',methods=['POST'])
+def post_data_multi():
+    data = json.loads(flask.request.data)
+    stringToSave = '<svg width="512" height="512">' + data['stim'].replace('&quot;', '\'') + '</svg>'
+    with open('./Stim/stim_'+str(data['trial'])+'.html', 'w') as f:
+        f.write(stringToSave)
+    return json.dumps(data)
 
 def get_targ_config(posi):
     return config.get_target_position(posi)
@@ -32,7 +45,7 @@ def getGaussian(length_config):
 def randShortStr(length):
     word = ""
     cons = ["c","n","c","n","c","n","s","v","x","z"]
-    vow = ["a","e","o","u"] 
+    vow = ["a","e","o","u","a","e","o","u"] 
     countVow =0 
     countCon =0
 
@@ -40,10 +53,12 @@ def randShortStr(length):
         rand = random.random()
         if ((countVow < 2) and (rand < 0.54)) or (countCon > 1):
             newChar = random.choice(vow)
+            vow.remove(newChar)
             countCon = 0
             countVow +=1
         else: 
             newChar = random.choice(cons)
+            cons.remove(newChar)
             countVow = 0
             countCon +=1
         word=word+newChar
@@ -79,18 +94,26 @@ def get_distractor(num):
         distractor_list.append({'text': dis_list[i],'size':getGaussian(size_config),'fill': dis_fill})
     return distractor_list
 
-def get_target(num):
-    targ_list = ["11test1","22test2"]
+# num: number of target words
+def get_target(num,trial):
     target_list = []
-    targ_size = config.get_targ_size()
-    targ_posi = config.get_target_position(1)
-    print(targ_posi)
+    targ_size = config.get_targ_size(trial)
+    posi = random.randint(1,4)
+    targ_posi = config.get_target_position(posi)
+    targ_length = config.get_targ_length(trial)
     for i in range(0,num):
-        target_list.append({'text': targ_list[i], 'size': targ_size[i], 'fill':'black', 'x': targ_posi[i]['x'], 'y':targ_posi[i]['y'], 'rotate': 0})
+        targ_text = randShortStr(targ_length[i])
+        # check for conflict with existing wordlist, need to update for only check distractor wordlist
+        while (targ_text in wordlist):
+            targ_text = randShortStr(targ_length[i])
+        target_list.append({'text': targ_text, 'size': targ_size[i], 'fill':'black', 'x': targ_posi[i]['x'], 'y':targ_posi[i]['y'], 'rotate': 0})
     return target_list
+
+
 
 if __name__=='__main__':
     wordlist = get_wordlist()
+    
     # with app.app_context():
     #     position = json.dumps(get_target(2))
     #     print(position)
