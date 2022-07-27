@@ -9,6 +9,7 @@
     <svg></svg>
 	</div>
   <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
   <script>
     var font_type = '{{font_type}}'
     var distractor_stim = {{distractors | safe}}

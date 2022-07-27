@@ -6,7 +6,12 @@ import math
 from Configures import config
 import csv
 
+from flask_util_js.flask_util_js import FlaskUtilJs
+
 app = Flask(__name__)
+app.config['WEB_ROOT'] = '/'
+# For flask_util.url_for() in JavaScript: https://github.com/dantezhu/flask_util_js
+fujs = FlaskUtilJs(app)
 
 @app.route('/')
 def hello_world():
