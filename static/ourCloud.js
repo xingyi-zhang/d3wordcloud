@@ -36,11 +36,13 @@ function draw(words) {
 
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:5000/post_stim',
+      url: 'http://127.0.0.1:5000/post_stim/',
       data: JSON.stringify(data_to_return),
       contentType: "application/json",
       success: function (response) {
-          window.location.href = 'http://127.0.0.1:5000/cloud/'+(trial+1) +'/'
+        if (buildAll ==1){
+          window.location.href = 'http://127.0.0.1:5000/buildcloud/'+(trial+1) +'/'
+        }
       },
       error: function (error) {
           alert('error saving data');

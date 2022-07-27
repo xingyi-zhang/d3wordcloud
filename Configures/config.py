@@ -14,6 +14,14 @@ def get_Config():
             configures.append(this_task)
     return configures
 
+# def get_Config():
+#     configures = [] 
+#     with open('./Configures/config_e1.csv', 'r', newline='') as f:
+#         reader = csv.DictReader(f)
+#         for row in reader:
+#             configures.append(row)
+#     return configures
+
 distratcor_num = 60
 distractor_fill = "#bdbdbd"
 dis_size_config = [10,40,20,18]
@@ -22,6 +30,8 @@ font_type = "Times New Roman"
 configures = get_Config() 
 
 #  return the randomly generated position of targets with given postion coding in the board
+# for the larger word:  0:upper left   1:upper right    2:lower left  3:lower right
+# the smaller word is just on the opposite quadrant to the larger word
 def get_target_position(posi):
     x1 = random.randint(50,125)
     y1 = random.randint(50,125)

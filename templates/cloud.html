@@ -15,6 +15,7 @@
     var target_stim = {{targets | safe}}
     var distractor_num = {{ dis_num }}
     var trial = {{trial_num}}
+    var buildAll = {{buildall}}
   </script>
   <script type="text/javascript" src="{{ url_for("static", filename="d3.layout.cloud.js") }}"></script>
   <script type="text/javascript" src="{{ url_for("static", filename="ourCloud.js") }}"></script>

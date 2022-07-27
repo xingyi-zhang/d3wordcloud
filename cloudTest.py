@@ -4,6 +4,8 @@ from flask import Flask, render_template, json
 import random
 import math
 from Configures import config
+import csv
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -14,23 +16,67 @@ def hello_world():
 def test_text():
     return 'Testing 1 2 4. "Three sir!" 3!'
 
+@app.route('/landing/')
+def get_landing_page():
+    return render_template('landing.html')
+
+@app.route('/instruction_1/')
+def get_instruction_1():
+    return render_template('instruction_1.html')
+
+@app.route('/instruction_2/')
+def get_instruction_2():
+    return render_template('instruction_2.html')
+
+@app.route('/completion/<turker_id>')
+def get_completion(turker_id):
+    return render_template('completion.html',tid = turker_id)
+
+
 @app.route('/start')
 def start_generate():
-    return flask.redirect(flask.url_for('cloud',trial=1))
+    return flask.redirect(flask.url_for('buildcloud',trial=1))
 
 @app.route('/cloud/<trial>/')
 def cloud(trial):
+    with open('./Stim_checked/stim_'+trial+'.html', 'r') as f:
+        stim_html = f.read()
+    return render_template('stim.html', stim = stim_html)
+
+@app.route('/buildcloud/<trial>/')
+def buildcloud(trial):
     if int(trial) > 71:
         return 'done'
-    return render_template('cloud.html',trial_num = trial, targets = json.dumps(get_target(2,int(trial))), distractors = json.dumps(get_distractor(100)),dis_num = config.get_dis_num(), font_type = config.get_font_type())
+    # weather to build all cloud, 1 means yes
+    buildAll = 0
+    return render_template('cloud.html',buildall = buildAll, trial_num = trial, targets = json.dumps(get_target(2,int(trial))), distractors = json.dumps(get_distractor(100)),dis_num = config.get_dis_num(), font_type = config.get_font_type())
 
-@app.route('/post_stim',methods=['POST'])
-def post_data_multi():
+@app.route('/post_stim/',methods=['POST'])
+def post_stim():
     data = json.loads(flask.request.data)
     stringToSave = '<svg width="512" height="512">' + data['stim'].replace('&quot;', '\'') + '</svg>'
     with open('./Stim/stim_'+str(data['trial'])+'.html', 'w') as f:
         f.write(stringToSave)
     return json.dumps(data)
+
+@app.route('/post_demographic/', methods = ['POST'])
+def post_demographic():
+    data = json.loads(flask.request.data)
+    print(data)
+    with open('./Demographics/pilot.csv','a',newline = '') as f:
+        fieldnames = ['turker_id', 'age', 'gender', 'education', 'device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
+        writer = csv.DictWriter(f, fieldnames= fieldnames)
+        # writer.writeheader()
+        writer.writerow(data)
+        f.write('\n')
+    return json.dumps(data)
+
+@app.route('/post_landing/', methods = ['POST'])
+def post_landing():
+    data = json.loads(flask.request.data)
+    print(data)
+    return data
+
 
 def get_targ_config(posi):
     return config.get_target_position(posi)
