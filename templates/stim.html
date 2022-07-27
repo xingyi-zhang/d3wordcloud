@@ -9,5 +9,41 @@
 	<div id="cloudSVG">{{stim |safe}} 
     
 	</div>
+	<script>
+
+
+		d3.selectAll('.target')
+			.on('click', function() {
+				// First, submit the data
+				// This will be an ajax call to a submit funciton in Python
+				// Things we want to record:
+				//	turker_id
+				//	stimID
+				//	time
+
+				// Then, generate feedback
+				let thisID = d3.select(this).attr('id');
+				if (thisID === 'target1') {
+					// Then they were right--tell them so!
+					// Change the message
+					// Disable the clicking ability
+					d3.selectAll('.target').on('click', null);
+				} else {
+					// THen they were wrong--tell them so!
+					// Change the message
+					// Disable the clicking ability
+				}
+
+				// Allow them to move to the next stimulus
+				// Create a "Next" button that redirects them
+				// Or else, "Click anywhere to continue"
+				// Something like d3.select('body').on('click', function() { // Redirect them, use flask_util } )
+			})
+
+		$(document).ready(function() {
+			var startTime = Date.now();
+			console.log('Loaded!');
+		})
+	</script>
 </body>
 </html>
