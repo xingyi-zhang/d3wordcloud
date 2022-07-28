@@ -22,15 +22,30 @@
 	<form action="{{url_for('get_completion')}}" method = "POST" id="completion"></form>
 	<form action="{{url_for('get_instruction_2')}}" method = "POST" id="ins2"></form>
 
-
-
 	<script>
 		var startTime
 		var trial_num = {{trial}}
 		var Stim_id = {{sid}}
 		var turker_id = {{tid}}
 		var order = {{order}}
-		d3.selectAll('.target')
+
+		for (var i = 0; i<2;i++){
+			var translate = d3.select('#target'+i).attr('transform').split(',')
+			var xloc = translate[0].split('(')[1]*1+256-50
+			var yloc = translate[1].split(')')[0]*1+256-25
+			d3.select('svg')
+				.append('rect')
+				.attr('id','clickRect'+i)
+				.attr('x',xloc )
+				.attr('y',yloc)
+				.attr('class','clickRect')
+				.attr('width',100)
+				.attr('height',50)
+				.attr('fill', 'transparent')
+				.attr('cursor','pointer')
+		}
+
+		d3.selectAll('.clickRect')
 			.on('click', function() {
 				// First, submit the data
 				// This will be an ajax call to a submit funciton in Python

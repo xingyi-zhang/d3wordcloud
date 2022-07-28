@@ -67,6 +67,16 @@
             $('#fscheck').html('');
             document.getElementById('next').disabled="";
         }
+
+        window.onresize = function (){
+            if ((window.innerWidth>600) && (window.innerHeight>600)){
+            $('#fscheck').html('');
+            document.getElementById('next').disabled="";
+        }
+
+        }
+
+
     </script>
 </body>
 
