@@ -31,17 +31,19 @@ function draw(words) {
     .attr("text-anchor", "middle")
     .attr("transform", d => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
     .attr("fill", d => d.fill)
+    .attr("class", d =>d.class)
+    .attr("id", d=>d.id)
     .text(d => d.text);
     data_to_return = {'trial':trial, 'stim':a.html()} 
 
     $.ajax({
       type: 'POST',
-      url: 'http://127.0.0.1:5000/post_stim/',
+      url: flask_util.url_for('post_stim_gen'),
       data: JSON.stringify(data_to_return),
       contentType: "application/json",
       success: function (response) {
         if (buildAll ==1){
-          window.location.href = 'http://127.0.0.1:5000/buildcloud/'+(trial+1) +'/'
+          window.location.href = flask_util.url_for('buildcloud', {'trial': (trial+1) })
         }
       },
       error: function (error) {

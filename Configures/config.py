@@ -26,6 +26,8 @@ distratcor_num = 60
 distractor_fill = "#bdbdbd"
 dis_size_config = [10,40,20,18]
 font_type = "Times New Roman"
+block_size = 18
+block_num = 4
 # note configures are zero-indexed
 configures = get_Config() 
 
@@ -70,3 +72,13 @@ def get_font_type():
 
 def get_dis_num():
     return distratcor_num
+
+def get_order():
+    order = []
+    for i in range(0,block_num):
+        avail  = list(range(0,block_size))
+        for j in range(0,block_size):
+            x = random.choice(avail)
+            order.append(x+block_size*i)
+            avail.remove(x)
+    return order

@@ -40,10 +40,12 @@
         <p>When you are ready, click "Next" below.<br></p>
             <button id="next" disabled="disabled">Next</button>
     </div>
-        
+    <form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+
     <script type="text/javascript">
         initialize();
-        console.log(window.innerWidth + '  '+window.innerHeight )
+        turker_id = {{tid}}
+        order = {{order}}
 
         function initialize() {
             var next = document.getElementById('next');
@@ -54,14 +56,12 @@
             //     $("body").html("Hello "+turker_id+", you have already participated in this research. \n If this is your first time participating in this research, please contant us at xxx@carleton.edu. \n Thank you for your understanding.")
             // }
         }
-
-        // function onNextClicked() {
-        //     var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-        //     $('#get_stimuli_page').append(input).submit();
-        // }
-
         function onNextClicked() {
-            window.location.href = 'http://127.0.0.1:5000/instruction_2/'
+            var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+            var trial = $("<input>").attr("type","hidden").attr("name","trial").val(0);
+            $('#cloud').append(tid).append(ord).append(trial).submit();
+            // window.location.href = flask_util.url_for('cloud',{'trial':1})
         }
         if ((window.innerWidth>600) && (window.innerHeight>600)){
             $('#fscheck').html('');

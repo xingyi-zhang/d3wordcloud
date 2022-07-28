@@ -4,7 +4,8 @@
 <head>
     <title>Task Description</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{url_for('static', filename='jqcloud.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
 </head>
 
@@ -21,6 +22,23 @@
             </p>
             </fieldset>
     </div>
+
+    <form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+
+    <div style="text-align: center;">
+		<button id="next">Next</button>
+	</div>
+
+    <script>
+        var turker_id = {{tid}}
+		var order = {{order}}
+        var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+		var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+		var trial = $("<input>").attr("type","hidden").attr("name","trial").val(18);
+        d3.selectAll('#next').on('click', function() {
+            $('#cloud').append(tid).append(ord).append(trial).submit();
+        })
+    </script>
 
 </body>
 

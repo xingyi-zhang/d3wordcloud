@@ -1,48 +1,91 @@
 <html>
 <head>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
 <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
 <title>Cloud in D3</title>
 </head>
 
 <body>
-	<div id="cloudSVG">{{stim |safe}} 
+	<div id="cloudSVG" style="text-align: center;">{{stim |safe}} 
     
 	</div>
+	<div style="text-align: center;">
+		<p id="feedback" style="font-size: x-large"></p>
+	</div>
+
+	<div style="text-align: center;">
+		<button id="next" style="display: none;">Next</button>
+	</div>
+
+	<form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+	<form action="{{url_for('get_completion')}}" method = "POST" id="completion"></form>
+	<form action="{{url_for('get_instruction_2')}}" method = "POST" id="ins2"></form>
+
+
+
 	<script>
-
-
+		var startTime
+		var trial_num = {{trial}}
+		var Stim_id = {{sid}}
+		var turker_id = {{tid}}
+		var order = {{order}}
 		d3.selectAll('.target')
 			.on('click', function() {
 				// First, submit the data
 				// This will be an ajax call to a submit funciton in Python
 				// Things we want to record:
-				//	turker_id
-				//	stimID
-				//	time
+				time = Date.now() - startTime
+				resp = d3.select(this).attr('id')
+				$.ajax({
+					type: 'POST',
+					url: flask_util.url_for('post_stim'),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":Stim_id,"time":time,"resp":resp}),
+                    contentType: "application/json",
 
-				// Then, generate feedback
+					success: function(response) {
+						// window.location.href = flask_util.url_for('get_instruction_1')
+
+						var tid = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+						$('#get_instruction_1').append(tid).submit();
+					},
+					error: function(error) {
+						alert('error saving data');
+					}
+				})
+
+				// Generate feedback
 				let thisID = d3.select(this).attr('id');
-				if (thisID === 'target1') {
-					// Then they were right--tell them so!
-					// Change the message
-					// Disable the clicking ability
-					d3.selectAll('.target').on('click', null);
-				} else {
-					// THen they were wrong--tell them so!
-					// Change the message
-					// Disable the clicking ability
+				if (trial_num>17) {
+					if (thisID === 'target0') {
+						document.getElementById("feedback").innerHTML = "Correct!";	
+					} else {
+						document.getElementById("feedback").innerHTML = "Incorrect!";
+					}
 				}
+				
+				// Disable the clicking ability
+				d3.selectAll('.target').on('click', null);
 
-				// Allow them to move to the next stimulus
-				// Create a "Next" button that redirects them
-				// Or else, "Click anywhere to continue"
-				// Something like d3.select('body').on('click', function() { // Redirect them, use flask_util } )
+				// Allow them to move to the next stimulus. "Click next to continue"
+				document.getElementById('next').style.display = "inline"
+				d3.selectAll('#next').on('click', function() {
+					var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+					var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+					var trial = $("<input>").attr("type","hidden").attr("name","trial").val(trial_num+1);
+					if (trial_num == 71){
+						$('#completion').append(tid).submit();
+					} else {
+						if (trial_num ==17){
+							$('#ins2').append(tid).append(ord).submit();
+						} else
+						$('#cloud').append(tid).append(ord).append(trial).submit();
+					}
+				})
 			})
 
 		$(document).ready(function() {
-			var startTime = Date.now();
-			console.log('Loaded!');
+			startTime = Date.now();
 		})
 	</script>
 </body>

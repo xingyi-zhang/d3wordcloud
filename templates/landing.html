@@ -57,10 +57,11 @@
 		<input id="turker_id"><button id="next" disabled="disabled">Ready</button>
 
 		<div id="jscheck"><p><strong>JavaScript error.</strong> It seems that JavaScript might not be enabled in your browser. It is required that Javascript be enabled to participate in this task. Please check browser settings before accepting HIT.</p></div>
+		
+		<form action="{{url_for('get_instruction_1')}}" method = "POST" id="get_instruction_1"></form>
+
 		<script type="text/javascript">
-
 			initialize();
-
 			function initialize() {
 				var next = document.getElementById('next');
 				if (next) {
@@ -71,22 +72,23 @@
 						$("#next").click();
 					}
 				});
-
 			}
 
 			function onNextClicked() {
 				$("#next").html('submitting');
 				this.onclick = undefined;
 				var turker_id = document.getElementById('turker_id').value; 
-				console.log({'turker_id': turker_id,})
 				$.ajax({
 					type: 'POST',
-					url: 'http://127.0.0.1:5000/post_landing/',
+					url: flask_util.url_for('post_landing'),
 					data: JSON.stringify({'turker_id': turker_id,}),
                     contentType: "application/json",
 
 					success: function(response) {
-						window.location.href = "http://127.0.0.1:5000/instruction_1/"
+						// window.location.href = flask_util.url_for('get_instruction_1')
+
+						var tid = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+						$('#get_instruction_1').append(tid).submit();
 					},
 					error: function(error) {
 						alert('error saving turker id');
