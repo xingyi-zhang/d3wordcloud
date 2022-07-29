@@ -40,42 +40,43 @@
         <p>When you are ready, click "Next" below.<br></p>
             <button id="next" disabled="disabled">Next</button>
     </div>
-    <form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+    <form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
 
     <script type="text/javascript">
-        initialize();
-        turker_id = {{tid}}
+        turker_id = {{turker_id}}
         order = {{order}}
+        width = {{width}}
+        height = {{height}}
+        var next = document.getElementById('next');
 
-        function initialize() {
-            var next = document.getElementById('next');
-            if (next) {
-                next.onclick = onNextClicked;
-            }
-            // if (participant === "tested"){
-            //     $("body").html("Hello "+turker_id+", you have already participated in this research. \n If this is your first time participating in this research, please contant us at xxx@carleton.edu. \n Thank you for your understanding.")
-            // }
+        if (next) {
+            next.onclick = onNextClicked;
         }
+
+        // submit the turker_id, order and trial index
         function onNextClicked() {
-            var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-            var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
-            var trial = $("<input>").attr("type","hidden").attr("name","trial").val(0);
-            $('#cloud').append(tid).append(ord).append(trial).submit();
-            // window.location.href = flask_util.url_for('cloud',{'trial':1})
+            var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            var ord_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+            var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(0);
+            $('#stim').append(tid_input).append(ord_input).append(trial).submit();
         }
-        if ((window.innerWidth>600) && (window.innerHeight>600)){
+
+        // check for window size and enable next
+        if ((window.innerWidth>width*1.2) && (window.innerHeight>height*1.2)){
             $('#fscheck').html('');
             document.getElementById('next').disabled="";
         }
 
+        // when resized, recheck the size 
         window.onresize = function (){
-            if ((window.innerWidth>600) && (window.innerHeight>600)){
-            $('#fscheck').html('');
-            document.getElementById('next').disabled="";
+            if ((window.innerWidth>width*1.2) && (window.innerHeight>height*1.2)){
+                $('#fscheck').html('');
+                document.getElementById('next').disabled="";
+            } else {
+                $('#fscheck').html('It seems that your browser window is too small. Please put your browser in full screen.');
+                document.getElementById('next').disabled="disabled";
+            }
         }
-
-        }
-
 
     </script>
 </body>

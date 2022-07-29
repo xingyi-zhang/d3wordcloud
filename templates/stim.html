@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<div id="cloudSVG" style="text-align: center;">{{stim |safe}} 
+	<div id="cloudSVG" style="text-align: center;">{{stim_html |safe}} 
     
 	</div>
 	<div style="text-align: center;">
@@ -18,21 +18,23 @@
 		<button id="next" style="display: none;">Next</button>
 	</div>
 
-	<form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+	<form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
 	<form action="{{url_for('get_completion')}}" method = "POST" id="completion"></form>
 	<form action="{{url_for('get_instruction_2')}}" method = "POST" id="ins2"></form>
 
 	<script>
 		var startTime
-		var trial_num = {{trial}}
-		var Stim_id = {{sid}}
-		var turker_id = {{tid}}
+		var trial_index = {{trial_index}}
+		var stim_id = {{stim_id}}
+		var turker_id = {{turker_id}}
 		var order = {{order}}
+		var config_env = {{config_env}}
 
+		// create click rectangles outside of the box 
 		for (var i = 0; i<2;i++){
 			var translate = d3.select('#target'+i).attr('transform').split(',')
-			var xloc = translate[0].split('(')[1]*1+256-50
-			var yloc = translate[1].split(')')[0]*1+256-25
+			var xloc = translate[0].split('(')[1]*1+config_env[2]/2-50
+			var yloc = translate[1].split(')')[0]*1+config_env[3]/2-25
 			d3.select('svg')
 				.append('rect')
 				.attr('id','clickRect'+i)
@@ -47,22 +49,15 @@
 
 		d3.selectAll('.clickRect')
 			.on('click', function() {
-				// First, submit the data
-				// This will be an ajax call to a submit funciton in Python
-				// Things we want to record:
-				time = Date.now() - startTime
+				// submit the data
+				resp_time = Date.now() - startTime
 				resp = d3.select(this).attr('id')
 				$.ajax({
 					type: 'POST',
 					url: flask_util.url_for('post_stim'),
-					data: JSON.stringify({'turker_id': turker_id,"stim_id":Stim_id,"time":time,"resp":resp}),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp}),
                     contentType: "application/json",
-
 					success: function(response) {
-						// window.location.href = flask_util.url_for('get_instruction_1')
-
-						var tid = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-						$('#get_instruction_1').append(tid).submit();
 					},
 					error: function(error) {
 						alert('error saving data');
@@ -71,8 +66,8 @@
 
 				// Generate feedback
 				let thisID = d3.select(this).attr('id');
-				if (trial_num>17) {
-					if (thisID === 'target0') {
+				if (trial_index >= config_env[1]){
+					if (thisID === 'clickRect0') {
 						document.getElementById("feedback").innerHTML = "Correct!";	
 					} else {
 						document.getElementById("feedback").innerHTML = "Incorrect!";
@@ -85,16 +80,18 @@
 				// Allow them to move to the next stimulus. "Click next to continue"
 				document.getElementById('next').style.display = "inline"
 				d3.selectAll('#next').on('click', function() {
-					var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-					var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
-					var trial = $("<input>").attr("type","hidden").attr("name","trial").val(trial_num+1);
-					if (trial_num == 71){
-						$('#completion').append(tid).submit();
-					} else {
-						if (trial_num ==17){
-							$('#ins2').append(tid).append(ord).submit();
-						} else
-						$('#cloud').append(tid).append(ord).append(trial).submit();
+					var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+					var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+					var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
+					switch (trial_index) {
+						case config_env[1]-1:
+							$('#ins2').append(tid_input).append(order_input).append(trial).submit()
+							break
+						case config_env[0]*config_env[1]-1:
+							$('#completion').append(tid_input).submit();
+							break
+						default: 
+							$('#stim').append(tid_input).append(order_input).append(trial).submit();
 					}
 				})
 			})

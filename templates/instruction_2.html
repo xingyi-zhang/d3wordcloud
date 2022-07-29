@@ -23,20 +23,21 @@
             </fieldset>
     </div>
 
-    <form action="{{url_for('cloud')}}" method = "POST" id="cloud"></form>
+    <form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
 
     <div style="text-align: center;">
 		<button id="next">Next</button>
 	</div>
 
     <script>
-        var turker_id = {{tid}}
+        var turker_id = {{turker_id}}
 		var order = {{order}}
-        var tid= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-		var ord = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
-		var trial = $("<input>").attr("type","hidden").attr("name","trial").val(18);
+		var trial_index = {{trial_index}}
+        var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+		var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+		var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
         d3.selectAll('#next').on('click', function() {
-            $('#cloud').append(tid).append(ord).append(trial).submit();
+            $('#stim').append(tid_input).append(order_input).append(trial).submit();
         })
     </script>
 

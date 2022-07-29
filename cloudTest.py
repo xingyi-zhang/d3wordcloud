@@ -17,10 +17,6 @@ fujs = FlaskUtilJs(app)
 def hello_world():
     return 'Hello World!'
 
-@app.route('/testText/')
-def test_text():
-    return 'Testing 1 2 4. "Three sir!" 3!'
-
 @app.route('/landing/')
 def get_landing_page():
     return render_template('landing.html')
@@ -29,32 +25,33 @@ def get_landing_page():
 def get_instruction_1():
     turker_id = flask.request.form['turker_id']
     order = config.get_order()
-    return render_template('instruction_1.html',tid = turker_id, order= order)
+    return render_template('instruction_1.html',turker_id = turker_id, order= order, width = config.get_config_env()[2], height = config.get_config_env()[3],)
 
 @app.route('/instruction_2/',methods = ['POST'])
 def get_instruction_2():
     turker_id = flask.request.form['turker_id']
     order = json.loads(flask.request.form['order'])
-    return render_template('instruction_2.html',tid = turker_id, order = order)
+    trial_index = int(flask.request.form['trial_index'])
+    return render_template('instruction_2.html',turker_id = turker_id, order = order, trial_index=trial_index)
 
 @app.route('/completion/',methods = ['POST'])
 def get_completion():
     turker_id = flask.request.form['turker_id']
-    return render_template('completion.html',tid = turker_id)
+    return render_template('completion.html',turker_id = turker_id)
 
 @app.route('/start')
 def start_generate():
     return flask.redirect(flask.url_for('buildcloud',trial=0))
 
-@app.route('/cloud/',methods = ['POST'])
-def cloud():
+@app.route('/stim/',methods = ['POST'])
+def get_stim():
     turker_id = flask.request.form['turker_id']
     order = json.loads(flask.request.form['order'])
-    trial = int(flask.request.form['trial'])
-    Stim_id = order[trial]
-    with open('./Stim_checked/stim_'+str(Stim_id)+'.html', 'r') as f:
+    trial_index = int(flask.request.form['trial_index'])
+    stim_id = order[trial_index]
+    with open('./Stim_checked/stim_'+str(stim_id)+'.html', 'r') as f:
         stim_html = f.read()
-    return render_template('stim.html', stim = stim_html, trial = trial, sid = Stim_id, tid = turker_id,order = order)
+    return render_template('stim.html', stim_html = stim_html, trial_index = trial_index, stim_id = stim_id, turker_id = turker_id, order = order,config_env = config.get_config_env())
 
 @app.route('/buildcloud/<trial>/')
 def buildcloud(trial):
@@ -76,7 +73,7 @@ def post_stim_gen():
 def post_stim():
     data = json.loads(flask.request.data)
     with open('./Results/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id',"stim_id","time","resp"]
+        fieldnames = ['turker_id',"stim_id","resp_time","resp"]
         writer = csv.DictWriter(f, fieldnames= fieldnames)
         # writer.writeheader()
         writer.writerow(data)
@@ -113,6 +110,7 @@ def getGaussian(length_config):
         if (length >length_config[0]) and (length < length_config[1]):
             return math.floor(length)
 
+# generate pronuncible word with given length 
 def randShortStr(length):
     word = ""
     cons = ["c","n","c","n","c","n","s","v","x","z"]
@@ -184,8 +182,6 @@ def get_target(num,trial):
 
 if __name__=='__main__':
     wordlist = get_wordlist()
-    # print(config.get_order())
-    
     # with app.app_context():
     #     position = json.dumps(get_target(2))
     #     print(position)

@@ -137,9 +137,8 @@
             };
 
             $("#radio_gender_other").click(()=>{$("#gender_other")[0].style.visibility="visible";});
-            $("#radio_eyetrace_other").click(()=>{$("#eyetrace_other")[0].style.visibility="visible";});
 
-            var turker_id = {{tid}}
+            var turker_id = {{turker_id}}
 
             function post_demographic_data(){
                 var age = document.getElementsByName("age")[0].value;
@@ -170,7 +169,7 @@
                 };
                 $.ajax({
                     type: 'POST',
-                    url: 'http://127.0.0.1:5000/post_demographic/',
+                    url: flask_util.url_for('post_demographic'),
                     data: JSON.stringify(demographic_data),
                     contentType: "application/json",
                     success: function(response){
