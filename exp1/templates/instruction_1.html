@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Task Description</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+</head>
+
+<body>
+    <div id="instruction" style="margin: auto; width: 60%;">
+        <fieldset>
+            <legend>
+                <h2>Instructions</h2>
+            </legend>
+            <p>Please put your browser in full screen and make sure you can see the full word cloud below </p>
+
+            <p>For each question, you will be presented with a word cloud like the one below. Some of the words are
+                highlighted in <strong>black font</strong>. Your task is to click on the black word with the
+                <strong>larger font size as quickly as accurately</strong> as possible.</p>
+
+            <p>For instance, in the word cloud below, "<strong>ccesv</strong>" and "<strong>nnauncou</strong>" are
+                highlighted in black font. Of the two,
+                "<strong>ccesv</strong>" has the larger font size. Therefore, clicking "<strong>ccesv</strong>" would be
+                the correct answer.</p>
+
+            <p>After your response is registered, the page will be cleaned. Then you may click on the page to proceed 
+                to the next word cloud, at your pace.</p>
+            </fieldset>
+    </div>
+    <div style="text-align:center;" id = "svg">
+        <svg width="512" height="512"><g transform="translate(256,256)"><text text-anchor="middle" transform="translate(58,-57)rotate(0)" fill="black" style="font-size: 23px; font-family: 'Times New Roman';">ccesv</text><text text-anchor="middle" transform="translate(-122,95)rotate(0)" fill="black" style="font-size: 21px; font-family: 'Times New Roman';">nnauncou</text><text text-anchor="middle" transform="translate(-122,-112)rotate(0)" fill="#bdbdbd" style="font-size: 10px; font-family: 'Times New Roman';">csuaxce</text><text text-anchor="middle" transform="translate(-60,-94)rotate(0)" fill="#bdbdbd" style="font-size: 13px; font-family: 'Times New Roman';">onoc</text><text text-anchor="middle" transform="translate(-4,-75)rotate(0)" fill="#bdbdbd" style="font-size: 17px; font-family: 'Times New Roman';">cucv</text><text text-anchor="middle" transform="translate(-69,-77)rotate(0)" fill="#bdbdbd" style="font-size: 14px; font-family: 'Times New Roman';">cexnaocuz</text><text text-anchor="middle" transform="translate(-33,-49)rotate(0)" fill="#bdbdbd" style="font-size: 23px; font-family: 'Times New Roman';">uunozs</text><text text-anchor="middle" transform="translate(102,-10)rotate(0)" fill="#bdbdbd" style="font-size: 29px; font-family: 'Times New Roman';">uvzocuxne</text><text text-anchor="middle" transform="translate(-26,10)rotate(0)" fill="#bdbdbd" style="font-size: 12px; font-family: 'Times New Roman';">zovoanunc</text><text text-anchor="middle" transform="translate(118,-33)rotate(0)" fill="#bdbdbd" style="font-size: 21px; font-family: 'Times New Roman';">eocsunce</text><text text-anchor="middle" transform="translate(3,36)rotate(0)" fill="#bdbdbd" style="font-size: 25px; font-family: 'Times New Roman';">nxoav</text><text text-anchor="middle" transform="translate(-94,-127)rotate(0)" fill="#bdbdbd" style="font-size: 25px; font-family: 'Times New Roman';">uusnao</text><text text-anchor="middle" transform="translate(-19,-7)rotate(0)" fill="#bdbdbd" style="font-size: 15px; font-family: 'Times New Roman';">oasea</text><text text-anchor="middle" transform="translate(-22,78)rotate(0)" fill="#bdbdbd" style="font-size: 34px; font-family: 'Times New Roman';">xoane</text><text text-anchor="middle" transform="translate(14,104)rotate(0)" fill="#bdbdbd" style="font-size: 37px; font-family: 'Times New Roman';">xeonca</text><text text-anchor="middle" transform="translate(-88,4)rotate(0)" fill="#bdbdbd" style="font-size: 11px; font-family: 'Times New Roman';">neunoz</text><text text-anchor="middle" transform="translate(86,77)rotate(0)" fill="#bdbdbd" style="font-size: 26px; font-family: 'Times New Roman';">sauzeo</text><text text-anchor="middle" transform="translate(-40,-29)rotate(0)" fill="#bdbdbd" style="font-size: 23px; font-family: 'Times New Roman';">naezu</text><text text-anchor="middle" transform="translate(26,-93)rotate(0)" fill="#bdbdbd" style="font-size: 35px; font-family: 'Times New Roman';">aoczuco</text><text text-anchor="middle" transform="translate(-80,53)rotate(0)" fill="#bdbdbd" style="font-size: 27px; font-family: 'Times New Roman';">uosnen</text><text text-anchor="middle" transform="translate(37,-33)rotate(0)" fill="#bdbdbd" style="font-size: 18px; font-family: 'Times New Roman';">asoneu</text><text text-anchor="middle" transform="translate(4,124)rotate(0)" fill="#bdbdbd" style="font-size: 11px; font-family: 'Times New Roman';">ceozua</text><text text-anchor="middle" transform="translate(-149,-49)rotate(0)" fill="#bdbdbd" style="font-size: 31px; font-family: 'Times New Roman';">excoucnen</text><text text-anchor="middle" transform="translate(-61,-13)rotate(0)" fill="#bdbdbd" style="font-size: 12px; font-family: 'Times New Roman';">naoxc</text><text text-anchor="middle" transform="translate(-97,29)rotate(0)" fill="#bdbdbd" style="font-size: 23px; font-family: 'Times New Roman';">veaccon</text><text text-anchor="middle" transform="translate(60,-75)rotate(0)" fill="#bdbdbd" style="font-size: 13px; font-family: 'Times New Roman';">onnacuax</text><text text-anchor="middle" transform="translate(47,11)rotate(0)" fill="#bdbdbd" style="font-size: 19px; font-family: 'Times New Roman';">vaecuo</text><text text-anchor="middle" transform="translate(-114,74)rotate(0)" fill="#bdbdbd" style="font-size: 25px; font-family: 'Times New Roman';">ecevnu</text><text text-anchor="middle" transform="translate(-73,115)rotate(0)" fill="#bdbdbd" style="font-size: 20px; font-family: 'Times New Roman';">nenao</text><text text-anchor="middle" transform="translate(114,35)rotate(0)" fill="#bdbdbd" style="font-size: 32px; font-family: 'Times New Roman';">xceanun</text><text text-anchor="middle" transform="translate(-110,-27)rotate(0)" fill="#bdbdbd" style="font-size: 18px; font-family: 'Times New Roman';">aenaceo</text><text text-anchor="middle" transform="translate(-91,140)rotate(0)" fill="#bdbdbd" style="font-size: 35px; font-family: 'Times New Roman';">ocovue</text><text text-anchor="middle" transform="translate(-139,3)rotate(0)" fill="#bdbdbd" style="font-size: 11px; font-family: 'Times New Roman';">ucnaevso</text><text text-anchor="middle" transform="translate(154,61)rotate(0)" fill="#bdbdbd" style="font-size: 29px; font-family: 'Times New Roman';">anze</text><text text-anchor="middle" transform="translate(6,147)rotate(0)" fill="#bdbdbd" style="font-size: 21px; font-family: 'Times New Roman';">osxanv</text><text text-anchor="middle" transform="translate(-1,-119)rotate(0)" fill="#bdbdbd" style="font-size: 28px; font-family: 'Times New Roman';">coenz</text><text text-anchor="middle" transform="translate(134,-61)rotate(0)" fill="#bdbdbd" style="font-size: 30px; font-family: 'Times New Roman';">cseec</text><text text-anchor="middle" transform="translate(57,-141)rotate(0)" fill="#bdbdbd" style="font-size: 28px; font-family: 'Times New Roman';">ncaunoo</text><text text-anchor="middle" transform="translate(45,126)rotate(0)" fill="#bdbdbd" style="font-size: 11px; font-family: 'Times New Roman';">ancoz</text><text text-anchor="middle" transform="translate(-83,163)rotate(0)" fill="#bdbdbd" style="font-size: 24px; font-family: 'Times New Roman';">csance</text><text text-anchor="middle" transform="translate(-142,-81)rotate(0)" fill="#bdbdbd" style="font-size: 24px; font-family: 'Times New Roman';">annuu</text><text text-anchor="middle" transform="translate(68,-164)rotate(0)" fill="#bdbdbd" style="font-size: 29px; font-family: 'Times New Roman';">zcuanoen</text><text text-anchor="middle" transform="translate(96,100)rotate(0)" fill="#bdbdbd" style="font-size: 20px; font-family: 'Times New Roman';">evc</text><text text-anchor="middle" transform="translate(-173,47)rotate(0)" fill="#bdbdbd" style="font-size: 29px; font-family: 'Times New Roman';">oznuo</text><text text-anchor="middle" transform="translate(8,173)rotate(0)" fill="#bdbdbd" style="font-size: 25px; font-family: 'Times New Roman';">uvaazsu</text><text text-anchor="middle" transform="translate(-59,-148)rotate(0)" fill="#bdbdbd" style="font-size: 24px; font-family: 'Times New Roman';">uec</text><text text-anchor="middle" transform="translate(139,10)rotate(0)" fill="#bdbdbd" style="font-size: 22px; font-family: 'Times New Roman';">usunec</text><text text-anchor="middle" transform="translate(-114,186)rotate(0)" fill="#bdbdbd" style="font-size: 28px; font-family: 'Times New Roman';">snec</text><text text-anchor="middle" transform="translate(145,-86)rotate(0)" fill="#bdbdbd" style="font-size: 27px; font-family: 'Times New Roman';">ezaonoc</text><text text-anchor="middle" transform="translate(53,55)rotate(0)" fill="#bdbdbd" style="font-size: 14px; font-family: 'Times New Roman';">aancuocu</text><text text-anchor="middle" transform="translate(100,120)rotate(0)" fill="#bdbdbd" style="font-size: 14px; font-family: 'Times New Roman';">aoxuceu</text><text text-anchor="middle" transform="translate(-165,114)rotate(0)" fill="#bdbdbd" style="font-size: 27px; font-family: 'Times New Roman';">zcao</text><text text-anchor="middle" transform="translate(116,143)rotate(0)" fill="#bdbdbd" style="font-size: 29px; font-family: 'Times New Roman';">onaac</text><text text-anchor="middle" transform="translate(-32,-172)rotate(0)" fill="#bdbdbd" style="font-size: 23px; font-family: 'Times New Roman';">cveocu</text><text text-anchor="middle" transform="translate(-95,212)rotate(0)" fill="#bdbdbd" style="font-size: 34px; font-family: 'Times New Roman';">couneav</text><text text-anchor="middle" transform="translate(-108,-151)rotate(0)" fill="#bdbdbd" style="font-size: 21px; font-family: 'Times New Roman';">ooxu</text><text text-anchor="middle" transform="translate(-178,-126)rotate(0)" fill="#bdbdbd" style="font-size: 24px; font-family: 'Times New Roman';">ncanoa</text><text text-anchor="middle" transform="translate(5,194)rotate(0)" fill="#bdbdbd" style="font-size: 16px; font-family: 'Times New Roman';">unoasxee</text><text text-anchor="middle" transform="translate(-151,-186)rotate(0)" fill="#bdbdbd" style="font-size: 38px; font-family: 'Times New Roman';">oasazuevo</text><text text-anchor="middle" transform="translate(71,-188)rotate(0)" fill="#bdbdbd" style="font-size: 39px; font-family: 'Times New Roman';">axzean</text><text text-anchor="middle" transform="translate(-172,-14)rotate(0)" fill="#bdbdbd" style="font-size: 31px; font-family: 'Times New Roman';">zou</text></g></svg>
+    </div>
+
+    
+    <div id="fscheck" style="text-align:center;"><p>It seems that your browser window is too small. Please put your browser in full screen.</p></div>
+
+    <div style="text-align:center;">
+        <p>When you are ready, click "Next" below.<br></p>
+            <button id="next" disabled="disabled">Next</button>
+    </div>
+    <form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
+
+    <script type="text/javascript">
+        turker_id = "{{turker_id}}"
+        order = {{order}}
+        width = {{width}}
+        height = {{height}}
+        var next = document.getElementById('next');
+
+        if (next) {
+            next.onclick = onNextClicked;
+        }
+
+        // submit the turker_id, order and trial index
+        function onNextClicked() {
+            var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            var ord_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+            var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(0);
+            $('#stim').append(tid_input).append(ord_input).append(trial).submit();
+        }
+
+        // check for window size and enable next
+        if ((window.innerWidth>width*1.2) && (window.innerHeight>height*1.2)){
+            $('#fscheck').html('');
+            document.getElementById('next').disabled="";
+        }
+
+        // when resized, recheck the size 
+        window.onresize = function (){
+            if ((window.innerWidth>width*1.2) && (window.innerHeight>height*1.2)){
+                $('#fscheck').html('');
+                document.getElementById('next').disabled="";
+            } else {
+                $('#fscheck').html('It seems that your browser window is too small. Please put your browser in full screen.');
+                document.getElementById('next').disabled="disabled";
+            }
+        }
+
+    </script>
+</body>
+
+</html>

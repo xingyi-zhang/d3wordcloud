@@ -1,0 +1,104 @@
+<html>
+<head>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+<script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+<title>Cloud in D3</title>
+</head>
+
+<body>
+	<div id="cloudSVG" style="text-align: center;">{{stim_html |safe}} 
+    
+	</div>
+	<div style="text-align: center;">
+		<p id="feedback" style="font-size: x-large"></p>
+	</div>
+
+	<div style="text-align: center;">
+		<button id="next" style="display: none;">Next</button>
+	</div>
+
+	<form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
+	<form action="{{url_for('get_completion')}}" method = "POST" id="completion"></form>
+	<form action="{{url_for('get_instruction_2')}}" method = "POST" id="ins2"></form>
+
+	<script>
+		var startTime
+		var trial_index = {{trial_index}}
+		var stim_id = {{stim_id}}
+		var turker_id = "{{turker_id}}"
+		var order = {{order}}
+		var config_env = {{config_env}}
+
+		// create click rectangles outside of the box 
+		for (var i = 0; i<2;i++){
+			var translate = d3.select('#target'+i).attr('transform').split(',')
+			var xloc = translate[0].split('(')[1]*1+config_env[2]/2-50
+			var yloc = translate[1].split(')')[0]*1+config_env[3]/2-25
+			d3.select('svg')
+				.append('rect')
+				.attr('id','clickRect'+i)
+				.attr('x',xloc )
+				.attr('y',yloc)
+				.attr('class','clickRect')
+				.attr('width',100)
+				.attr('height',50)
+				.attr('fill', 'transparent')
+				.attr('cursor','pointer')
+		}
+
+		d3.selectAll('.clickRect')
+			.on('click', function() {
+				// submit the data
+				resp_time = Date.now() - startTime
+				resp = d3.select(this).attr('id')
+				$.ajax({
+					type: 'POST',
+					url: flask_util.url_for('post_stim'),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp}),
+                    contentType: "application/json",
+					success: function(response) {
+					},
+					error: function(error) {
+						alert('error saving data');
+					}
+				})
+
+				// Generate feedback
+				let thisID = d3.select(this).attr('id');
+				if (trial_index >= config_env[1]){
+					if (thisID === 'clickRect0') {
+						document.getElementById("feedback").innerHTML = "Correct!";	
+					} else {
+						document.getElementById("feedback").innerHTML = "Incorrect!";
+					}
+				}
+				
+				// Disable the clicking ability
+				d3.selectAll('.target').on('click', null);
+
+				// Allow them to move to the next stimulus. "Click next to continue"
+				document.getElementById('next').style.display = "inline"
+				d3.selectAll('#next').on('click', function() {
+					var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+					var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+					var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
+					switch (trial_index) {
+						case config_env[1]-1:
+							$('#ins2').append(tid_input).append(order_input).append(trial).submit()
+							break
+						case config_env[0]*config_env[1]-1:
+							$('#completion').append(tid_input).submit();
+							break
+						default: 
+							$('#stim').append(tid_input).append(order_input).append(trial).submit();
+					}
+				})
+			})
+
+		$(document).ready(function() {
+			startTime = Date.now();
+		})
+	</script>
+</body>
+</html>
