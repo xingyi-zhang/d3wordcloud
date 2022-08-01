@@ -62,7 +62,7 @@ def buildcloud(trial):
     if int(trial) > 53:
         return 'done'
     # weather to build all cloud, 1 means yes
-    buildAll = 1
+    buildAll = 0
     return render_template('cloud.html',buildall = buildAll, trial_num = trial, targets = json.dumps(get_target(2,int(trial))), distractors = json.dumps(get_distractor(100)),dis_num = config.get_dis_num(), font_type = config.get_font_type())
 
 @app.route('/post_stim_gen/',methods=['POST'])
@@ -170,7 +170,7 @@ def get_distractor(num):
 def get_target(num,trial):
     target_list = []
     targ_size = config.get_targ_size(trial)
-    posi = random.randint(1,4)
+    posi = random.randint(0,3)
     targ_posi = config.get_target_position(posi)
     targ_length = config.get_targ_length(trial)
     for i in range(0,num):
