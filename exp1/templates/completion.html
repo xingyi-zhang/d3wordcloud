@@ -39,6 +39,13 @@
                 </form>
 
                 <br>
+                <b>Are you a native English speaker?</b><br>
+                <form id="native_lan_form">
+                    <input type="radio" name="native_lan" value="1" />Yes
+                    <input type="radio" name="native_lan" value="0" />NO
+                </form>
+
+                <br>
                 <b>Education Level:</b><br>
                 <form id="edu_form">
                     <input type="radio" name="edu" value="1" />Some High School
@@ -92,8 +99,8 @@
                 Value: <span id="confidence_value"></span>%<br>
 
                 <br>
-                <b>We'd love to hear your feedbacks!</b><br>
-                <textarea id="comments" rows="4" cols = "100" placeholder="Please feel free to point out any deficiency on experiment design/user experience/bugs,etc. Your comment is greatly appreciated."></textarea>
+                <b>We'd love to hear your strategies and feedbacks!</b><br>
+                <textarea id="comments" rows="4" cols = "100" placeholder="Please feel free to share your strategies used to distinguish the larger word, or point out any deficiency on experiment design/user experience/bugs,etc. Your comment is greatly appreciated."></textarea>
             </fieldset>
 
             <br>
@@ -147,6 +154,7 @@
                 var exp_de = document.getElementById("experience_device_range").value;
                 var exp_cl = document.getElementById("experience_cloud_range").value;
                 var edu = getRadioVal(document.getElementById("edu_form"),"edu");
+                var native_lan = getRadioVal(document.getElementById("native_lan_form"),"native_lan");
                 var comments = document.getElementById("comments").value;
                 var device = getRadioVal($("#device_form")[0],"device");
                 var browser = getRadioVal($("#browser_form")[0],"browser");
@@ -159,6 +167,7 @@
                     "age": age,
                     "gender": gender,
                     "education": edu,
+                    "language": native_lan,
                     "device": device,
                     "browser": browser,
                     "difficulty": difficulty,

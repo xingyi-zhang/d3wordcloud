@@ -15,7 +15,7 @@
 	</div>
 
 	<div style="text-align: center;">
-		<button id="next" style="display: none;">Next</button>
+		<button id="next" style="display: none;width:60px;height:30px;font-size: 15px;">Next</button>
 	</div>
 
 	<form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
@@ -63,6 +63,8 @@
 						alert('error saving data');
 					}
 				})
+				// Disable the clicking ability
+				d3.selectAll('.clickRect').on('click', null);
 
 				// Generate feedback
 				let thisID = d3.select(this).attr('id');
@@ -74,9 +76,6 @@
 					}
 				}
 				
-				// Disable the clicking ability
-				d3.selectAll('.target').on('click', null);
-
 				// Allow them to move to the next stimulus. "Click next to continue"
 				document.getElementById('next').style.display = "inline"
 				d3.selectAll('#next').on('click', function() {

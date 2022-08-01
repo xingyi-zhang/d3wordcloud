@@ -59,10 +59,10 @@ def get_stim():
 
 @app.route('/buildcloud/<trial>/')
 def buildcloud(trial):
-    if int(trial) > 71:
+    if int(trial) > 53:
         return 'done'
     # weather to build all cloud, 1 means yes
-    buildAll = 0
+    buildAll = 1
     return render_template('cloud.html',buildall = buildAll, trial_num = trial, targets = json.dumps(get_target(2,int(trial))), distractors = json.dumps(get_distractor(100)),dis_num = config.get_dis_num(), font_type = config.get_font_type())
 
 @app.route('/post_stim_gen/',methods=['POST'])
@@ -87,7 +87,7 @@ def post_stim():
 def post_demographic():
     data = json.loads(flask.request.data)
     with open('./Demographics/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id', 'age', 'gender', 'education', 'device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
+        fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
         writer = csv.DictWriter(f, fieldnames= fieldnames)
         # writer.writeheader()
         writer.writerow(data)

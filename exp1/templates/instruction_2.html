@@ -35,7 +35,7 @@
 		var trial_index = {{trial_index}}
         var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
 		var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
-		var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
+		var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index);
         d3.selectAll('#next').on('click', function() {
             $('#stim').append(tid_input).append(order_input).append(trial).submit();
         })

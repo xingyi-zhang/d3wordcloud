@@ -19,7 +19,7 @@ distractor_fill = "#bdbdbd"
 dis_size_config = [10,40,20,18]
 font_type = "Times New Roman"
 block_size = 18
-block_num = 4
+block_num = 3
 svg_width = 512
 svg_height = 512
 # note configures are zero-indexed
@@ -29,10 +29,10 @@ configures = get_Config()
 # for the larger word:  0:upper left   1:upper right    2:lower left  3:lower right
 # the smaller word is just on the opposite quadrant to the larger word
 def get_target_position(posi):
-    x1 = random.randint(50,125)
-    y1 = random.randint(50,125)
-    x2 = random.randint(50,125)
-    y2 = math.floor(math.sqrt(250 **2 - (x1+x2)**2) - y1)
+    x1 = random.randint(50,150)
+    y1 = random.randint(50,150)
+    x2 = random.randint(50,150)
+    y2 = math.floor(math.sqrt(300 **2 - (x1+x2)**2) - y1)
 
     if posi == 0:
         x1 = -x1
@@ -47,7 +47,7 @@ def get_target_position(posi):
         x2 = -x2
         y2 = -y2 
 
-    return [{'x': x1+256, 'y': y1+256},{'x': x2+256, 'y': y2+235}]
+    return [{'x': x1+256, 'y': y1+256},{'x': x2+256, 'y': y2+256}]
 
 def get_dis_size_config():
      return dis_size_config
