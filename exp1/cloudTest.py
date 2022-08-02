@@ -76,7 +76,7 @@ def post_stim_gen():
 def post_stim():
     data = json.loads(flask.request.data)
     with open('./Results/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id',"stim_id","resp_time","resp"]
+        fieldnames = ['turker_id',"stim_id","resp_time","resp","group"]
         writer = csv.DictWriter(f, fieldnames= fieldnames)
         # writer.writeheader()
         writer.writerow(data)
