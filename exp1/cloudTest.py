@@ -187,5 +187,13 @@ if __name__=='__main__':
     # with app.app_context():
     #     position = json.dumps(get_target(2))
     #     print(position)
+    if len(sys.argv) != 3:
+		print('Usage: {0} host port'.format(sys.argv[0]))
+		print('  Example: {0} allen.mathcs.carleton.edu xxxx'.format(sys.argv[0]))
+		exit()
+	
+	host = sys.argv[1]
+	port = int(sys.argv[2])
+	app.run(host=host, port=port, debug=True)
 
     app.run(debug=True)
