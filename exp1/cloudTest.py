@@ -1,4 +1,3 @@
-import dataclasses
 import flask
 from flask import Flask, render_template, json
 import random

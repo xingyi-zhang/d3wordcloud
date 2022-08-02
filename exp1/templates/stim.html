@@ -29,6 +29,7 @@
 		var turker_id = "{{turker_id}}"
 		var order = {{order}}
 		var config_env = {{config_env}}
+		var group = order[0] & 1
 
 		// create click rectangles outside of the box 
 		for (var i = 0; i<2;i++){
@@ -55,7 +56,7 @@
 				$.ajax({
 					type: 'POST',
 					url: flask_util.url_for('post_stim'),
-					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp}),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group}),
                     contentType: "application/json",
 					success: function(response) {
 					},
@@ -67,9 +68,8 @@
 				d3.selectAll('.clickRect').on('click', null);
 
 				// Generate feedback
-				let thisID = d3.select(this).attr('id');
-				if (trial_index >= config_env[1]){
-					if (thisID === 'clickRect0') {
+				if ((group ==1)&&(trial_index >= config_env[1])) {
+					if (resp === 'clickRect0') {
 						document.getElementById("feedback").innerHTML = "Correct!";	
 					} else {
 						document.getElementById("feedback").innerHTML = "Incorrect!";
@@ -84,7 +84,11 @@
 					var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
 					switch (trial_index) {
 						case config_env[1]-1:
-							$('#ins2').append(tid_input).append(order_input).append(trial).submit()
+							if (group ==1 ){
+								$('#ins2').append(tid_input).append(order_input).append(trial).submit()
+							} else {
+								$('#stim').append(tid_input).append(order_input).append(trial).submit();
+							}
 							break
 						case config_env[0]*config_env[1]-1:
 							$('#completion').append(tid_input).submit();
