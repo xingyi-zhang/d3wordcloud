@@ -99,7 +99,7 @@ def post_landing():
     print(data)
     # turker_id = flask.request.form
     # print(turker_id)
-    # return 
+    return json.dumps(data)
 
 
 def get_targ_config(posi):
