@@ -5,14 +5,26 @@ import math
 from Configures import config
 import csv
 import os,sys 
+import psycopg2
+from psycopg2 import sql
+tid_database = 'wc22_e1_tid'
+results_database = 'wc22_e1_results'
+demographics_database = 'wc22_e1_dem'
 
 from flask_util_js import FlaskUtilJs
 
 app = Flask(__name__)
-app.debug = True
 app.config['WEB_ROOT'] = '/'
 # For flask_util.url_for() in JavaScript: https://github.com/dantezhu/flask_util_js
 fujs = FlaskUtilJs(app)
+
+def get_connection():
+    connection = None
+    try:
+        connection = psycopg2.connect(host='localhost',database='fontsize',user='fontsize',password='wordcloudsbad?')
+    except Exception as e:
+        print(e, file=sys.stderr)
+    return connection
 
 @app.route('/')
 def hello_world():
@@ -38,7 +50,8 @@ def get_instruction_2():
 @app.route('/completion/',methods = ['POST'])
 def get_completion():
     turker_id = flask.request.form['turker_id']
-    return render_template('completion.html',turker_id = turker_id)
+    hash_code = hash(turker_id + 'Carleton')
+    return render_template('completion.html',turker_id = turker_id, hash_code = hash_code)
 
 @app.route('/start')
 def start_generate():
@@ -73,32 +86,77 @@ def post_stim_gen():
 @app.route('/post_stim/',methods=['POST'])
 def post_stim():
     data = json.loads(flask.request.data)
-    with open('./Results/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id',"stim_id","resp_time","resp","group"]
-        writer = csv.DictWriter(f, fieldnames= fieldnames)
-        # writer.writeheader()
-        writer.writerow(data)
+    turker_id = data["turker_id"]
+    stim_id = int(data["stim_id"])
+    resp_time = float(data["resp_time"])
+    resp = data["resp"]
+    group = int(data["group"])
+    if True:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup) 
+        VALUES (%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    else:
+        with open('./Results/pilot.csv','a',newline = '') as f:
+            fieldnames = ['turker_id',"stim_id","resp_time","resp","group"]
+            writer = csv.DictWriter(f, fieldnames= fieldnames)
+            # writer.writeheader()
+            writer.writerow(data)
     return json.dumps(data)
 
 @app.route('/post_demographic/', methods = ['POST'])
 def post_demographic():
     data = json.loads(flask.request.data)
-    with open('./Demographics/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
-        writer = csv.DictWriter(f, fieldnames= fieldnames)
-        # writer.writeheader()
-        writer.writerow(data)
-        f.write('\n')
+    turker_id = data["turker_id"]
+    age = data["age"]
+    gender = data["gender"]
+    education = int(data["education"])
+    language = int(data["language"])
+    device = int(data["device"])
+    browser = int(data["browser"])
+    difficulty = int(data["difficulty"])
+    confidence = int(data["confidence"])
+    exp_de = int(data["exp_de"])
+    exp_cl = int(data["exp_cl"])
+    zoom = float(data["zoom"])
+    comments = data["comments"]
+    if True:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments) 
+        VALUES (%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    else:
+        with open('./Demographics/pilot.csv','a',newline = '') as f:
+            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
+            writer = csv.DictWriter(f, fieldnames= fieldnames)
+            # writer.writeheader()
+            writer.writerow(data)
+            f.write('\n')
     return json.dumps(data)
 
 @app.route('/post_landing/', methods = ['POST'])
 def post_landing():
+    flag = "1"
     data = json.loads(flask.request.data)
-    print(data)
-    # turker_id = flask.request.form
-    # print(turker_id)
-    return json.dumps(data)
-
+    turker_id = data["turker_id"]
+    if True:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(turker_database)),(turker_id))
+        if len(cursor.fetchall()) == 0:
+            cursor.execute(sql.SQL("INSERT INTO {} (turker_id) VALUES (%s)").format(sql.Identifier(turker_database)),(turker_id))
+        else:
+            flag = "-1"
+        connection.commit()
+        cursor.close()
+        connection.close()
+    return flag
 
 def get_targ_config(posi):
     return config.get_target_position(posi)
@@ -178,13 +236,8 @@ def get_target(num,trial):
         target_list.append({'text': targ_text, 'size': targ_size[i], 'fill':'black', 'x': targ_posi[i]['x'], 'y':targ_posi[i]['y'], 'rotate': 0,'id':'target'+str(i),'class':'target'})
     return target_list
 
-
-
 if __name__=='__main__':
     wordlist = get_wordlist()
-    # with app.app_context():
-    #     position = json.dumps(get_target(2))
-    #     print(position)
     if len(sys.argv) != 3:
         print('Usage: {0} host port'.format(sys.argv[0]))
         print('  Example: {0} allen.mathcs.carleton.edu xxxx'.format(sys.argv[0]))

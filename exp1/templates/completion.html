@@ -42,7 +42,7 @@
                 <b>Are you a native English speaker?</b><br>
                 <form id="native_lan_form">
                     <input type="radio" name="native_lan" value="1" />Yes
-                    <input type="radio" name="native_lan" value="0" />NO
+                    <input type="radio" name="native_lan" value="2" />NO
                 </form>
 
                 <br>
@@ -110,7 +110,7 @@
         </div>
         
         <div style="margin: auto; width: 60%; ">
-            <p id="hashcode" style="visibility: hidden; font-size: x-large">Your completion code is: 1245878</p>
+            <p id="hashcode" style="visibility: hidden; font-size: x-large">Your completion code is: {{hash_code}}</p>
         </div>
 
         <script type="text/javascript" src="../static/jquery-3.4.1.min.js"></script>
@@ -159,6 +159,7 @@
                 var device = getRadioVal($("#device_form")[0],"device");
                 var browser = getRadioVal($("#browser_form")[0],"browser");
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
+                var zoom = window.devicePixelRatio
                 if (gender === "other"){
                     gender = $("#gender_other").value;
                 }
@@ -174,6 +175,7 @@
                     "confidence": confidence,
                     "exp_de" : exp_de,
                     "exp_cl" : exp_cl,
+                    "zoom": zoom,
                     "comments": comments,
                 };
                 $.ajax({
