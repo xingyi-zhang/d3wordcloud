@@ -127,7 +127,7 @@ def post_demographic():
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments) 
-        VALUES (%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments))
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments))
         connection.commit()
         cursor.close()
         connection.close()
