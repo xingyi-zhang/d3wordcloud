@@ -148,9 +148,9 @@ def post_landing():
     if True:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(tid_database)),(turker_id))
+        cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(tid_database)),(turker_id,))
         if len(cursor.fetchall()) == 0:
-            cursor.execute(sql.SQL("INSERT INTO {} (turker_id) VALUES (%s)").format(sql.Identifier(tid_database)),(turker_id))
+            cursor.execute(sql.SQL("INSERT INTO {} (turker_id) VALUES (%s)").format(sql.Identifier(tid_database)),(turker_id,))
         else:
             flag = "-1"
         connection.commit()
