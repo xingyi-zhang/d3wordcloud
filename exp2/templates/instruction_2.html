@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Task Description</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+</head>
+
+<body>
+    <div id="instruction" style="margin: auto; width: 60%;">
+        <fieldset>
+            <legend>
+                <h2>Instructions</h2>
+            </legend>
+            
+            <p>You are now ready to start the experiment. You just need to do the same as in the practice.
+                Remember, right for English word and left for non-English word. Press the key <strong>as quickly 
+                as accurately</strong> as possible.</p>
+            </p>
+            </fieldset>
+    </div>
+
+    <form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
+
+    <div style="text-align: center;">
+		<button id="next">Next</button>
+	</div>
+
+    <script>
+        var turker_id = "{{turker_id}}"
+		var order = {{order}}
+		var trial_index = {{trial_index}}
+        var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+		var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+		var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index);
+        d3.selectAll('#next').on('click', function() {
+            $('#stim').append(tid_input).append(order_input).append(trial).submit();
+        })
+    </script>
+
+</body>
+
+</html>

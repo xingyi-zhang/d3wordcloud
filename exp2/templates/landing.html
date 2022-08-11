@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Welcome</title>
+        <meta charset="UTF-8">
+		<script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+		<script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+	</head>
+
+	<body>
+		<h2>Exploration of Word Size Data Encodings</h2>
+
+		<h3>Description of Research</h3>
+
+		<p>You are invited to participate in a research study about factors influencing perception of texts. De-identified data may be shared with collaborators at other universities. The study will take about 5 minutes.
+		</p>
+
+		<p>To participate, you must:
+			<ul>
+			<li>HAVE NOT ALREADY COMPLETED THIS STUDY</li>
+			<li>be between 18-65 years of age.</li>
+			<li>be a native English speaker.</li>
+			<li>have normal or corrected to normal vision</li>
+			<li>be comfortable with reading text through online interface</li>
+			<li>have JavaScript enabled in your browser.</li>
+			</ul>
+		</p>
+
+		<h3>What Will My Participation Involve?</h3>
+
+		<p> You will be presented with groups of texts, and then answer questions about them.</p>
+
+		<h3>Are There Any Risks and Benefits To Me?</h3>
+
+		<p>There is no risk associated with the study greater than normal daily activity. There are no direct benefits to you other than compensation.</p>
+
+		<h3>Will I Be Compensated For My Participation?</h3>
+
+		<p>You will receive xxxx dollars for participating in this study. If you withdraw prior to the end of the study, you will receive no compensation.</p>
+
+		<h3>How Will My Confidentiality Be Protected?</h3>
+
+		<p>Your data might be used for publication as a result of this study, however your name will not be used nor associated with your data.</p>
+
+		<h3>Whom Should I Contact If I Have Questions?</h3>
+
+		<p>If you have questions about the research, you could contact the Principal Investigator Dr Eric Alexander at 507-222-4170. If you are not satisfied with the response of the research team, or have more questions, you may contact the Institutional Review Board for Research with Human Subjects at Carleton College, c/o Office of the Associate Dean of the College, Carleton College, One North College Street, Northfield MN, 55057; telephone (507) 222-4301.</p>
+
+		<p>Your participation is completely voluntary. You may end your participation at any time without penalty.</p>
+
+		<h3>Consenting to participate</h3>
+
+		<p>Filling in your Amazon Mechanical Turk ID and hitting the "Ready" button indicates that you have read this consent form, have an opportunity to ask any questions about your participation in this research and voluntarily consent to participate.</p>
+
+
+		<p>Please provide you Amazon Turker ID</p>
+		<input id="turker_id"><button id="next" disabled="disabled">Ready</button>
+
+		<div id="jscheck"><p><strong>JavaScript error.</strong> It seems that JavaScript might not be enabled in your browser. It is required that Javascript be enabled to participate in this task. Please check browser settings before accepting HIT.</p></div>
+		
+		<form action="{{url_for('get_instruction_1')}}" method = "POST" id="get_instruction_1"></form>
+
+		<script type="text/javascript">
+			// allow participants to continue when enter key is pressed or next bottom is clicked
+			var next = document.getElementById('next');
+			if (next) {
+				next.onclick = onNextClicked;
+			}
+			$(document).keypress(function(e){
+				if (e.which == 13){
+				$("#next").click();
+			}
+			})
+
+			// send back turker id and redirect to new page
+			function onNextClicked() {
+				$("#next").html('submitting');
+				this.onclick = undefined;
+				var turker_id = document.getElementById('turker_id').value; 
+				$.ajax({
+					type: 'POST',
+					url: flask_util.url_for('post_landing'),
+					data: JSON.stringify({'turker_id': turker_id,}),
+                    contentType: "application/json",
+
+					success: function(response) {
+						var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+						$('#get_instruction_1').append(tid_input).submit();
+					},
+					error: function(error) {
+						alert('error saving turker id');
+					}
+					});
+				}
+			$('#jscheck').html('');
+			document.getElementById('next').disabled="";				
+		</script>
+	</body>
+</html>

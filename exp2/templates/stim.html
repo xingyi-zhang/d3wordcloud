@@ -1,0 +1,102 @@
+<html>
+<head>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+<script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+<title>Cloud in D3</title>
+</head>
+
+<body>
+	<div id="cloudSVG" style="text-align: center;">{{stim_html |safe}} 
+	</div>
+
+	<form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
+	<form action="{{url_for('get_completion')}}" method = "POST" id="completion"></form>
+	<form action="{{url_for('get_instruction_2')}}" method = "POST" id="ins2"></form>
+	<div style="text-align: center;">
+		<p id="feedback" style="font-size: x-large;"> </p>
+	</div>
+
+	<script>
+		var startTime
+		var trial_index = {{trial_index}}
+		var stim_id = {{stim_id}}
+		var turker_id = "{{turker_id}}"
+		var order = {{order}}
+		var config_env = {{config_env}}
+		var group = {{group}}
+		var flag = 0
+
+		$(document).keydown(function(e){
+			resp = e.which
+			if (((resp ==37)||(resp == 39)||(resp ==70)||(resp == 74))&&(flag==1)){
+				resp_time = Date.now() - startTime
+				flag = 2
+				console.log(resp)
+				$.ajax({
+					type: 'POST',
+					url: flask_util.url_for('post_stim'),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group}),
+					contentType: "application/json",
+					success: function(response) {
+					},
+					error: function(error) {
+						alert('error saving data');
+					}
+				})
+				if (stim_id<config_env[0]){
+					var fb = ""
+					var resp_word = true
+					switch (resp) {
+						case 37:
+							resp_word = false
+							fb = "You just pressed &#8592, indicating {{target}} is a nonword. "
+							break
+						case 39:
+							fb = "You just pressed &#8594, indicating {{target}} is an English word. "
+							break
+						case 70:
+							resp_word = false
+							fb = "You just pressed F, indicating {{target}} is a nonword. "
+							break
+						case 74: 
+							fb = "You just pressed J, indicating {{target}} is an English word. "
+					}
+					console.log(resp_word,group)
+					if (((group == 0)&&resp_word)||((group == 1)&&!resp_word)){
+						fb = fb + "<br>That is CORRECT. Press space bar to continue. "
+					} else {
+						fb = fb + " <br> That is INCORRECT. Press space bar to continue. "
+					}
+					$('#feedback').html(fb)
+				} else{
+					$('#feedback').html("Press space bar to continue. <br> You have completed {{trial_index-5}} out of 72 trials")
+				}
+			}
+			
+			if ((resp ==32)&&(flag==2)) {
+				var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+				var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
+				var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
+				switch (trial_index) {
+					case config_env[0]-1:
+						$('#ins2').append(tid_input).append(order_input).append(trial).submit()
+						break
+					case config_env[1]-1:
+						$('#completion').append(tid_input).submit();
+						break
+					default: 
+						$('#stim').append(tid_input).append(order_input).append(trial).submit();
+				}
+			}
+		})
+		$(document).ready(function() {
+			setTimeout(function(){
+				$("#cloudSVG").html('<svg width="650" height="400"><text transform="translate(600,215)" style="font-size: 17px;">word</text><text transform="translate(600,200)" style="font-size: 17px;"> &#8594 | J</text><text transform="translate(0,215)" style="font-size: 17px;">nonword</text><text transform="translate(0,200)" style="font-size: 17px;"> &#8592 | F</text><text text-anchor="middle" transform="translate(325,200)" fill="black" style="font-size: 23px; font-family: "Times New Roman";">{{target}}</text></svg>');
+				startTime = Date.now();
+				flag = 1
+			},{{display_time}});
+		})
+	</script>
+</body>
+</html>

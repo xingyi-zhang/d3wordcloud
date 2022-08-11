@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<title>Cloud in D3</title>
+</head>
+
+<body>
+	<div id="cloudSVG">
+    <svg></svg>
+	</div>
+  <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{ url_for("flask_util_js") }}"></script>
+  <script>
+    var font_type = '{{font_type}}'
+    var words = {{words | safe}}
+    var trial = {{trial_num}}
+    var buildAll = {{buildall}}
+    var size = {{size |safe}}
+  </script>
+  <script type="text/javascript" src="{{ url_for("static", filename="d3.layout.cloud.js") }}"></script>
+  <script type="text/javascript" src="{{ url_for("static", filename="buildCloud.js") }}"></script>
+</body>
+
+
+</html>
