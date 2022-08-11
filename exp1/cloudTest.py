@@ -5,8 +5,11 @@ import math
 from Configures import config
 import csv
 import os,sys 
-import psycopg2
-from psycopg2 import sql
+try:
+    import psycopg2
+    from psycopg2 import sql
+except Exception as e:
+    print(e, file=sys.stderr)
 tid_database = 'wc22_e1_tid'
 results_database = 'wc22_e1_results'
 demographics_database = 'wc22_e1_dem'
@@ -91,7 +94,7 @@ def post_stim():
     resp_time = float(data["resp_time"])
     resp = data["resp"]
     group = int(data["group"])
-    if True:
+    if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup) 
@@ -123,7 +126,7 @@ def post_demographic():
     exp_cl = int(data["exp_cl"])
     zoom = float(data["zoom"])
     comments = data["comments"]
-    if True:
+    if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments) 
@@ -133,7 +136,7 @@ def post_demographic():
         connection.close()
     else:
         with open('./Demographics/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
+            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','comments']
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)
@@ -145,7 +148,7 @@ def post_landing():
     flag = "1"
     data = json.loads(flask.request.data)
     turker_id = data["turker_id"]
-    if True:
+    if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(tid_database)),(turker_id,))
