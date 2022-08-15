@@ -82,10 +82,14 @@
 					url: flask_util.url_for('post_landing'),
 					data: JSON.stringify({'turker_id': turker_id,}),
                     contentType: "application/json",
-
 					success: function(response) {
-						var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-						$('#get_instruction_1').append(tid_input).submit();
+						if (response =="-1"){
+							$("#jscheck").html("You have participated in this experiment, please exit.")
+							document.getElementById('next').disabled="disabled";
+						} else {
+							var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+							$('#get_instruction_1').append(tid_input).submit();
+						}
 					},
 					error: function(error) {
 						alert('error saving turker id');

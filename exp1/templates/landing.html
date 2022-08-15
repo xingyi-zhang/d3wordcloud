@@ -22,6 +22,7 @@
 			<li>have normal or corrected to normal vision</li>
 			<li>be comfortable with reading text through online interface</li>
 			<li>have JavaScript enabled in your browser.</li>
+			<li>be using laptop or computer.</li>
 			</ul>
 		</p>
 
@@ -60,6 +61,18 @@
 		<form action="{{url_for('get_instruction_1')}}" method = "POST" id="get_instruction_1"></form>
 
 		<script type="text/javascript">
+			var device_type = "desktop";
+			var user_agent = navigator.userAgent;
+			if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(user_agent)) {
+                device_type = "tablet";
+            }
+            else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
+                device_type = "mobile";
+            }
+			if (device_type != "desktop"){
+				$("#jscheck").html("You must participate through a laptop or computer. Please switch a device.")
+				document.getElementById('next').disabled="disabled";
+			}
 			// allow participants to continue when enter key is pressed or next bottom is clicked
 			var next = document.getElementById('next');
 			if (next) {

@@ -92,19 +92,21 @@ def post_stim():
     turker_id = data["turker_id"]
     stim_id = int(data["stim_id"])
     resp_time = float(data["resp_time"])
-    resp = data["resp"]
+    resp = int(data["resp"])
     group = int(data["group"])
+    trial_index = int(data["trial_index"])
+    block_num= int(data["block_num"])
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup) 
-        VALUES (%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group))
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,got_feedback,trial_index,block_num) 
+        VALUES (%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,trial_index,block_num))
         connection.commit()
         cursor.close()
         connection.close()
     else:
         with open('./Results/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id',"stim_id","resp_time","resp","group"]
+            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","trial_index","block_num"]
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)
@@ -125,18 +127,20 @@ def post_demographic():
     exp_de = int(data["exp_de"])
     exp_cl = int(data["exp_cl"])
     zoom = float(data["zoom"])
+    user_agent = data["user_agent"]
+    device_type =  data["device_type"]
     comments = data["comments"]
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments) 
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,comments))
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,device_type,comments) 
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,device_type,comments))
         connection.commit()
         cursor.close()
         connection.close()
     else:
         with open('./Demographics/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','comments']
+            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','user_agent','device_type','comments']
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)

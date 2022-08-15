@@ -159,6 +159,8 @@
                 var device = getRadioVal($("#device_form")[0],"device");
                 var browser = getRadioVal($("#browser_form")[0],"browser");
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
+                var zoom = window.devicePixelRatio;
+                var user_agent = navigator.userAgent;
                 if (gender === "other"){
                     gender = $("#gender_other").value;
                 }
@@ -174,6 +176,8 @@
                     "confidence": confidence,
                     "exp_de" : exp_de,
                     "exp_cl" : exp_cl,
+                    "zoom": zoom,
+                    "user_agent": user_agent,
                     "comments": comments,
                 };
                 $.ajax({

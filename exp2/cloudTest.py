@@ -4,6 +4,15 @@ import random
 import math
 from Configures import config
 import csv
+import sys
+try:
+    import psycopg2
+    from psycopg2 import sql
+except Exception as e:
+    print(e, file=sys.stderr)
+tid_database = 'wc22_e2a_tid'
+results_database = 'wc22_e2a_results'
+demographics_database = 'wc22_e2a_dem'
 
 from flask_util_js import FlaskUtilJs
 
@@ -12,6 +21,14 @@ app.debug = True
 app.config['WEB_ROOT'] = '/'
 # For flask_util.url_for() in JavaScript: https://github.com/dantezhu/flask_util_js
 fujs = FlaskUtilJs(app)
+
+def get_connection():
+    connection = None
+    try:
+        connection = psycopg2.connect(host='localhost',database='fontsize',user='fontsize',password='wordcloudsbad?')
+    except Exception as e:
+        print(e, file=sys.stderr)
+    return connection
 
 @app.route('/')
 def hello_world():
@@ -61,6 +78,7 @@ def get_completion():
     hash_code = hash(turker_id + 'Carleton')
     return render_template('completion.html',turker_id = turker_id, hash_code = hash_code)
 
+# generate the svg image
 @app.route('/post_stim_gen/',methods=['POST'])
 def post_stim_gen():
     data = json.loads(flask.request.data)
@@ -78,6 +96,8 @@ def get_prime(trial,num):
         pri_list.remove(cue)
     return prime_list
 
+# get the target
+# flag = 1: non word; flag = 0: English word
 def get_target(stim_id,flag):
     return config.get_target(stim_id,flag)
 
@@ -95,35 +115,91 @@ def get_distractor(trial,num):
         distractor_list.append({'text': dis,'size':23,'fill': "black",'class':'np'})
     return distractor_list
 
+# record the data after each trial into database or csv
 @app.route('/post_stim/',methods=['POST'])
 def post_stim():
     data = json.loads(flask.request.data)
-    with open('./Results/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id',"stim_id","resp_time","resp","group"]
-        writer = csv.DictWriter(f, fieldnames= fieldnames)
-        #writer.writeheader()
-        writer.writerow(data)
+    turker_id = data["turker_id"]
+    stim_id = int(data["stim_id"])
+    resp_time = float(data["resp_time"])
+    resp = int(data["resp"])
+    group = int(data["group"])
+    correct = int(data["correct"])
+    trial_index = int(data["trial_index"])
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup,correct,trial_index) 
+        VALUES (%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    else:
+        with open('./Results/pilot.csv','a',newline = '') as f:
+            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","correct","trial_index"]
+            writer = csv.DictWriter(f, fieldnames= fieldnames)
+            # writer.writeheader()
+            writer.writerow(data)
     return json.dumps(data)
 
+# record the demographic data into database or csv
 @app.route('/post_demographic/', methods = ['POST'])
 def post_demographic():
     data = json.loads(flask.request.data) 
-    with open('./Demographics/pilot.csv','a',newline = '') as f:
-        fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','comments']
-        writer = csv.DictWriter(f, fieldnames= fieldnames)
-        writer.writeheader()
-        writer.writerow(data)
-        f.write('\n')
+    turker_id = data["turker_id"]
+    age = data["age"]
+    gender = data["gender"]
+    education = int(data["education"])
+    language = int(data["language"])
+    device = int(data["device"])
+    browser = int(data["browser"])
+    difficulty = int(data["difficulty"])
+    confidence = int(data["confidence"])
+    exp_de = int(data["exp_de"])
+    exp_cl = int(data["exp_cl"])
+    zoom = float(data["zoom"])
+    user_agent = data["user_agent"]
+    comments = data["comments"]
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,comments) 
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,comments))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    else:
+        with open('./Demographics/pilot.csv','a',newline = '') as f:
+            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','user_agent','comments']
+            writer = csv.DictWriter(f, fieldnames= fieldnames)
+            # writer.writeheader()
+            writer.writerow(data)
+            f.write('\n')
     return json.dumps(data)
 
+# check if the participant has participanted in our experiment, if not, allow them to move on
 @app.route('/post_landing/', methods = ['POST'])
 def post_landing():
+    flag = "1"
     data = json.loads(flask.request.data)
-    return json.dumps(data)
+    turker_id = data["turker_id"]
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(tid_database)),(turker_id,))
+        if len(cursor.fetchall()) == 0:
+            cursor.execute(sql.SQL("INSERT INTO {} (turker_id) VALUES (%s)").format(sql.Identifier(tid_database)),(turker_id,))
+        else:
+            flag = "-1"
+        connection.commit()
+        cursor.close()
+        connection.close()
+    return flag
 
+# get words that will be used in word cloud
+# actual ratio = 1/3 * ratio 
 def get_words(trial):
     words = []
-    #  actual ratio = 1/3 * ratio 
     ratio = config.get_config_ratio(trial)
     primes = get_prime(trial,10*ratio)
     distractors = get_distractor(trial,30-10*ratio)

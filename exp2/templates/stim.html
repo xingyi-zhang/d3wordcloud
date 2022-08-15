@@ -26,17 +26,20 @@
 		var config_env = {{config_env}}
 		var group = {{group}}
 		var flag = 0
+		var correct = 0
 
 		$(document).keydown(function(e){
 			resp = e.which
 			if (((resp ==37)||(resp == 39)||(resp ==70)||(resp == 74))&&(flag==1)){
 				resp_time = Date.now() - startTime
 				flag = 2
-				console.log(resp)
+				if (((group == 0)&&((resp==39)||(resp==74)))||((group == 1)&&((resp==37)||(resp==70)))){
+					correct = 1
+				}
 				$.ajax({
 					type: 'POST',
 					url: flask_util.url_for('post_stim'),
-					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group}),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group,"correct":correct,"trial_index":trial_index}),
 					contentType: "application/json",
 					success: function(response) {
 					},
@@ -46,24 +49,20 @@
 				})
 				if (stim_id<config_env[0]){
 					var fb = ""
-					var resp_word = true
 					switch (resp) {
 						case 37:
-							resp_word = false
 							fb = "You just pressed &#8592, indicating {{target}} is a nonword. "
 							break
 						case 39:
 							fb = "You just pressed &#8594, indicating {{target}} is an English word. "
 							break
 						case 70:
-							resp_word = false
 							fb = "You just pressed F, indicating {{target}} is a nonword. "
 							break
 						case 74: 
 							fb = "You just pressed J, indicating {{target}} is an English word. "
 					}
-					console.log(resp_word,group)
-					if (((group == 0)&&resp_word)||((group == 1)&&!resp_word)){
+					if (correct ==1){
 						fb = fb + "<br>That is CORRECT. Press space bar to continue. "
 					} else {
 						fb = fb + " <br> That is INCORRECT. Press space bar to continue. "

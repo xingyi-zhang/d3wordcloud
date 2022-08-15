@@ -52,11 +52,16 @@
 			.on('click', function() {
 				// submit the data
 				resp_time = Date.now() - startTime
-				resp = d3.select(this).attr('id')
+				resp_id = d3.select(this).attr('id')
+				resp = 0
+				if (resp_id == "clickRect0") {
+					resp = 1
+				}
+				block_num = Math.floor(stim_id/18)
 				$.ajax({
 					type: 'POST',
 					url: flask_util.url_for('post_stim'),
-					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group}),
+					data: JSON.stringify({'turker_id': turker_id,"stim_id":stim_id,"resp_time":resp_time,"resp":resp,"group":group,"trial_index":trial_index,"block_num":block_num}),
                     contentType: "application/json",
 					success: function(response) {
 					},

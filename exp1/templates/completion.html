@@ -71,8 +71,9 @@
                 ii) Are you using a trackpad or a physical mouse?
                 <form id="device_form">
                     <input type="radio" name="device" value="1" />Trackpad
-                    <input type="radio" name="device" value="2" />Physical mouse
-                    <input type="radio" name="device" value="3" />Other
+                    <input type="radio" name="device" value="2" />Physical Mouse
+                    <input type="radio" name="device" value="3" />Touch Screen
+                    <input type="radio" name="device" value="4" />Other
                 </form>
 
                 <br>
@@ -159,7 +160,15 @@
                 var device = getRadioVal($("#device_form")[0],"device");
                 var browser = getRadioVal($("#browser_form")[0],"browser");
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
-                var zoom = window.devicePixelRatio
+                var zoom = window.devicePixelRatio;
+                var user_agent = navigator.userAgent;
+                var device_type = "desktop"
+                if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(user_agent)) {
+                    device_type = "tablet";
+                }
+                else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
+                    device_type = "mobile";
+                }
                 if (gender === "other"){
                     gender = $("#gender_other").value;
                 }
@@ -176,6 +185,8 @@
                     "exp_de" : exp_de,
                     "exp_cl" : exp_cl,
                     "zoom": zoom,
+                    "user_agent": user_agent,
+                    "device_type":device_type,
                     "comments": comments,
                 };
                 $.ajax({
