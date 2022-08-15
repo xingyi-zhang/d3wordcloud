@@ -16,10 +16,14 @@
                 <h2>Instructions</h2>
             </legend>
             
-            <p>In the next part, you will be presented with the feedback of your answer after each trial. For example, 
+            <p> Thank you! You have completed the first part of the experiment. </p>
+            <p id = "feedback">
+                In the next part, you will be presented with some more wordclouds.
+                You will receive feedback of your answer after each trial. For example, 
                 if you clicked the smaller word, the screen would flash “<strong>Incorrect</strong>".  
-                If you clicked the larger word, the screen would flash “<strong>Correct</strong>". 
+                If you clicked the larger word, the screen would flash “<strong>Correct</strong>".
             </p>
+            <p>Please continue to click on the larger target as quickly and as accurately as possible. </p>
             </fieldset>
     </div>
 
@@ -33,6 +37,10 @@
         var turker_id = "{{turker_id}}"
 		var order = {{order}}
 		var trial_index = {{trial_index}}
+		var group = order[0] & 1
+        if (group ==0){
+            document.getElementById("feedback").innerHTML = "In the next part, you will be presented some more wordclouds.";
+        }
         var tid_input= $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
 		var order_input = $("<input>").attr("type","hidden").attr("name","order").val(JSON.stringify(order));
 		var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index);

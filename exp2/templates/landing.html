@@ -23,6 +23,7 @@
 			<li>have normal or corrected to normal vision</li>
 			<li>be comfortable with reading text through online interface</li>
 			<li>have JavaScript enabled in your browser.</li>
+			<li>be using laptop or computer with a keyboard.</li>
 			</ul>
 		</p>
 
@@ -63,6 +64,14 @@
 		<script type="text/javascript">
 			// allow participants to continue when enter key is pressed or next bottom is clicked
 			var next = document.getElementById('next');
+			var device_type = "desktop";
+			var user_agent = navigator.userAgent;
+			if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(user_agent)) {
+                device_type = "tablet";
+            }
+            else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
+                device_type = "mobile";
+            }
 			if (next) {
 				next.onclick = onNextClicked;
 			}
@@ -87,8 +96,13 @@
 							$("#jscheck").html("You have participated in this experiment, please exit.")
 							document.getElementById('next').disabled="disabled";
 						} else {
-							var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-							$('#get_instruction_1').append(tid_input).submit();
+							if (device_type != "desktop"){
+								$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
+								document.getElementById('next').disabled="disabled";
+							} else {
+								var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+								$('#get_instruction_1').append(tid_input).submit();
+							}
 						}
 					},
 					error: function(error) {

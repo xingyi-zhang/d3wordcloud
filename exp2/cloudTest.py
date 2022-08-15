@@ -10,7 +10,7 @@ try:
     from psycopg2 import sql
 except Exception as e:
     print(e, file=sys.stderr)
-tid_database = 'wc22_e2a_tid'
+tid_database = 'wc22_e2_tid'
 results_database = 'wc22_e2a_results'
 demographics_database = 'wc22_e2a_dem'
 
@@ -66,7 +66,7 @@ def get_stim():
     order = json.loads(flask.request.form['order'])
     trial_index = int(flask.request.form['trial_index'])
     stim_id = order[trial_index]
-    group = (stim_id-order[0])&1
+    group = (stim_id-order[5])&1
     target = get_target(stim_id, group)
     with open('./Stim_checked/stim_'+str(stim_id)+'.html', 'r') as f:
         stim_html = f.read()
@@ -130,7 +130,7 @@ def post_stim():
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup,correct,trial_index) 
-        VALUES (%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index))
+        VALUES (%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index))
         connection.commit()
         cursor.close()
         connection.close()
@@ -159,18 +159,19 @@ def post_demographic():
     exp_cl = int(data["exp_cl"])
     zoom = float(data["zoom"])
     user_agent = data["user_agent"]
+    device_type =  data["device_type"]
     comments = data["comments"]
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,comments) 
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,comments))
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,device_type,comments) 
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(demographics_database)),(turker_id,age, gender,education,language,device,browser,difficulty, confidence,exp_de,exp_cl,zoom,user_agent,device_type,comments))
         connection.commit()
         cursor.close()
         connection.close()
     else:
         with open('./Demographics/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','user_agent','comments']
+            fieldnames = ['turker_id', 'age', 'gender', 'education', 'language','device', 'browser', 'difficulty', 'confidence', 'exp_de','exp_cl','zoom','user_agent','device_type','comments']
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)

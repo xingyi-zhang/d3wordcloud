@@ -161,6 +161,13 @@
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 var zoom = window.devicePixelRatio;
                 var user_agent = navigator.userAgent;
+                var device_type = "desktop"
+                if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(user_agent)) {
+                    device_type = "tablet";
+                }
+                else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
+                    device_type = "mobile";
+                }
                 if (gender === "other"){
                     gender = $("#gender_other").value;
                 }
@@ -178,6 +185,7 @@
                     "exp_cl" : exp_cl,
                     "zoom": zoom,
                     "user_agent": user_agent,
+                    "device_type":device_type,
                     "comments": comments,
                 };
                 $.ajax({

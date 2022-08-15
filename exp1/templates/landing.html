@@ -69,10 +69,6 @@
             else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
                 device_type = "mobile";
             }
-			if (device_type != "desktop"){
-				$("#jscheck").html("You must participate through a laptop or computer. Please switch a device.")
-				document.getElementById('next').disabled="disabled";
-			}
 			// allow participants to continue when enter key is pressed or next bottom is clicked
 			var next = document.getElementById('next');
 			if (next) {
@@ -96,13 +92,17 @@
                     contentType: "application/json",
 					success: function(response) {
 						if (response =="-1"){
-							$("#jscheck").html("You have participated in this experiment, please exit.")
+							$("#jscheck").html("Sorry, you have participated in this experiment, please exit.")
 							document.getElementById('next').disabled="disabled";
 						} else {
-							var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-							$('#get_instruction_1').append(tid_input).submit();
+							if (device_type != "desktop"){
+								$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
+								document.getElementById('next').disabled="disabled";
+							} else {
+								var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+								$('#get_instruction_1').append(tid_input).submit();
+							}
 						}
-						
 					},
 					error: function(error) {
 						alert('error saving turker id');

@@ -89,11 +89,7 @@
 					var trial = $("<input>").attr("type","hidden").attr("name","trial_index").val(trial_index+1);
 					switch (trial_index) {
 						case config_env[1]-1:
-							if (group ==1 ){
-								$('#ins2').append(tid_input).append(order_input).append(trial).submit()
-							} else {
-								$('#stim').append(tid_input).append(order_input).append(trial).submit();
-							}
+							$('#ins2').append(tid_input).append(order_input).append(trial).submit()
 							break
 						case config_env[0]*config_env[1]-1:
 							$('#completion').append(tid_input).submit();
