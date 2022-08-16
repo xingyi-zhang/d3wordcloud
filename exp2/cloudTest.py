@@ -17,7 +17,6 @@ demographics_database = 'wc22_e2a_dem'
 from flask_util_js import FlaskUtilJs
 
 app = Flask(__name__)
-app.debug = True
 app.config['WEB_ROOT'] = '/'
 # For flask_util.url_for() in JavaScript: https://github.com/dantezhu/flask_util_js
 fujs = FlaskUtilJs(app)
@@ -129,7 +128,7 @@ def post_stim():
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,pgroup,correct,trial_index) 
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,nonword,correct,trial_index)
         VALUES (%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index))
         connection.commit()
         cursor.close()
@@ -215,6 +214,11 @@ if __name__=='__main__':
     target_dict = config.get_dict()
     whole_dict = config.get_whole_dict()
     cue_dict = config.get_cue_dict()
-    # print(len(cue_dict))
     # config.get_target_dict()
-    app.run(debug=True)
+    if len(sys.argv) != 3:
+        print('Usage: {0} host port'.format(sys.argv[0]))
+        print('  Example: {0} allen.mathcs.carleton.edu xxxx'.format(sys.argv[0]))
+        exit()
+    host = sys.argv[1]
+    port = int(sys.argv[2])
+    app.run(host=host, port=port, debug=True)
