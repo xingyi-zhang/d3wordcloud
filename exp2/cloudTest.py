@@ -125,17 +125,19 @@ def post_stim():
     group = int(data["group"])
     correct = int(data["correct"])
     trial_index = int(data["trial_index"])
+    display_time = int(data["display_time"])
+    ratio = int(data["ratio"])
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,nonword,correct,trial_index)
-        VALUES (%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index))
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,nonword,correct,trial_index,display_time,ratio)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index,display_time,ratio))
         connection.commit()
         cursor.close()
         connection.close()
     else:
         with open('./Results/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","correct","trial_index"]
+            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","correct","trial_index","display_time","ratio"]
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)
