@@ -64,15 +64,20 @@
 			var device_type = "desktop";
 			var user_agent = navigator.userAgent;
 			if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(user_agent)) {
-                device_type = "tablet";
-            }
-            else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
-                device_type = "mobile";
-            }
+				device_type = "tablet";
+			}
+			else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(user_agent)) {
+				device_type = "mobile";
+			}
 			// allow participants to continue when enter key is pressed or next bottom is clicked
 			var next = document.getElementById('next');
 			if (next) {
-				next.onclick = onNextClicked;
+				if (device_type != "desktop"){
+					$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
+					document.getElementById('next').disabled="disabled";
+				} else {
+					next.onclick = onNextClicked;
+				}
 			}
 			$(document).keypress(function(e){
 				if (e.which == 13){
@@ -95,13 +100,8 @@
 							$("#jscheck").html("Sorry, you have participated in this experiment, please exit.")
 							document.getElementById('next').disabled="disabled";
 						} else {
-							if (device_type != "desktop"){
-								$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
-								document.getElementById('next').disabled="disabled";
-							} else {
-								var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-								$('#get_instruction_1').append(tid_input).submit();
-							}
+							var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+							$('#get_instruction_1').append(tid_input).submit();
 						}
 					},
 					error: function(error) {
