@@ -73,12 +73,7 @@
 				device_type = "mobile";
 			}
 			if (next) {
-				if (device_type != "desktop"){
-					$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
-					document.getElementById('next').disabled="disabled";
-				} else {
-					next.onclick = onNextClicked;
-				}
+				next.onclick = onNextClicked;
 			}
 			$(document).keypress(function(e){
 				if (e.which == 13){
@@ -89,27 +84,32 @@
 			// send back turker id and redirect to new page
 			function onNextClicked() {
 				$("#next").html('submitting');
-				this.onclick = undefined;
-				var turker_id = document.getElementById('turker_id').value; 
-				$.ajax({
-					type: 'POST',
-					url: flask_util.url_for('post_landing'),
-					data: JSON.stringify({'turker_id': turker_id,}),
-					contentType: "application/json",
-					success: function(response) {
-						if (response =="-1"){
-							$("#jscheck").html("You have participated in this experiment, please exit.")
-							document.getElementById('next').disabled="disabled";
-						} else {
-							var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-							$('#get_instruction_1').append(tid_input).submit();
+				if (device_type != "desktop"){
+					$("#jscheck").html("Sorry, you must participate through a laptop or computer. Please switch a device to participate.")
+					document.getElementById('next').disabled="disabled";
+				} else {
+					this.onclick = undefined;
+					var turker_id = document.getElementById('turker_id').value; 
+					$.ajax({
+						type: 'POST',
+						url: flask_util.url_for('post_landing'),
+						data: JSON.stringify({'turker_id': turker_id,}),
+						contentType: "application/json",
+						success: function(response) {
+							if (response =="-1"){
+								$("#jscheck").html("You have participated in this experiment, please exit.")
+								document.getElementById('next').disabled="disabled";
+							} else {
+								var tid_input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+								$('#get_instruction_1').append(tid_input).submit();
+							}
+						},
+						error: function(error) {
+							alert('error saving turker id');
 						}
-					},
-					error: function(error) {
-						alert('error saving turker id');
-					}
-					});
+						});
 				}
+			}
 			$('#jscheck').html('');
 			document.getElementById('next').disabled="";				
 		</script>
