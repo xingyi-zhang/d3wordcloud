@@ -74,7 +74,7 @@
 
 				// Generate feedback
 				if ((group ==1)&&(trial_index >= config_env[1])) {
-					if (resp === 'clickRect0') {
+					if (resp == 1) {
 						document.getElementById("feedback").innerHTML = "Correct!";	
 					} else {
 						document.getElementById("feedback").innerHTML = "Incorrect!";
