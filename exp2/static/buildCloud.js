@@ -30,7 +30,7 @@ function draw(words) {
     .attr("text-anchor", "middle")
     .attr("transform", d => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
     .attr("fill", d => d.fill)
-    .attr("class", d => d.class)
+    .attr("id", d => d.id)
     .text(d => d.text);
     data_to_return = {'trial':trial, 'stim':a.html()} 
 

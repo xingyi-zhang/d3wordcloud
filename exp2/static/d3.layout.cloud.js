@@ -24,13 +24,10 @@ function cloud(d3) {
         random = Math.random,
         cloud = {};
 
-    
-    //position, the placement of targets   
-    // i = -1 + number of targets  
     cloud.start = function() {
       var board = zeroArray((size[0] >> 5) * size[1]),
           bounds = null,
-          n = words.length+1,
+          n = words.length,
           i = -1,
           tags = [],
           data = words.map(function(d, i) {
@@ -44,51 +41,24 @@ function cloud(d3) {
             return d;
           }); //deleted .sort(function(a, b) { return b.size - a.size; })
 
-      //placeTarget(targets)
-
       if (timer) clearInterval(timer);
       timer = setInterval(step, 0);
       step();
 
       return cloud;
 
-      // place target word in desired location 
-      function placeTarget(target) {
-        for (var ii=0; ii<target.length; ii++){
-          var targ = target[ii]
-          c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
-          c.save();
-          c.font = data[0].style + " " + data[0].weight + " " + ~~((targ.size + 1) / ratio) + "px " + data[0].font;
-          bound = c.measureText(targ.text + "m")
-          rw = size[0]>>5  // ratio of width -- how many numbers[boxes] are there in one row of the board
-          xs = Math.floor((targ.x-bound.actualBoundingBoxLeft)/size[0] * rw)  // x starting point
-          xoff = Math.ceil(32 - ((targ.x-bound.actualBoundingBoxLeft) % 32 ))  // how many pixels are taken by the first unfull box of the word
-          // leave blanks for target word
-          // divided into three parts: unfull left, full middle, unfull right
-          y_up = Math.floor(targ.y-bound.actualBoundingBoxAscent) -1 // upper bound of y. add one to avoid collision
-          y_down = Math.ceil(targ.y+bound.actualBoundingBoxDescent) + 1 //lower bound of y
-          for (var k = y_up; k < y_down; k++) {
-            board[k*rw+ xs ]  = 1 << xoff -1
-            i = 1
-            while ((bound.width - xoff) > i*32){
-              board[k*rw+ xs+i] =0x7FFFFFFF
-              i++
-            }
-            board[k*rw + xs+i] =0x7FFFFFFF - (1 <<(bound.width - (i-1)*32 - xoff -1)) 
-          }          
-          targ.x = targ.x -(size[0]>>1)
-          targ.y = targ.y -(size[1]>>1)
-          tags.push(targ);
-          event.word(targ);
-        }
-      }
-
       function step() {
         var start = Date.now();
         while (Date.now() - start < timeInterval && ++i < n && timer) {
           var d = data[i];
-          d.x = (size[0] * (random() + .5)) >> 1;
-          d.y = (size[1] * (random() + .5)) >> 1;
+          if (i ==0){
+            d.x = size[0] >> 1;
+            d.y = size[1] >> 1;
+            console.log(d)
+          } else {
+            d.x = (size[0] * (random() + .5)) >> 1;
+            d.y = (size[1] * (random() + .5)) >> 1;
+          }
           cloudSprite(d, data, i);
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d);

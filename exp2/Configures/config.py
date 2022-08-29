@@ -1,8 +1,9 @@
 import csv
 import random
+#note, the first five are practices
 
-# get a target - 20 cues dictionary 
-def get_dict():
+# get a target - 25 cues dictionary 
+def get_target_dict():
     target_dict = []
     raw_dict = []
     with open('./Configures/target_dict.csv', 'r', newline='') as f:
@@ -23,14 +24,14 @@ def get_dict():
 
 # Read in all the target and find corresponding nonwords with the same length 
 # Only need to execute once when a new target dictionary is generated
-def get_target_dict():
+def get_nonword_dict():
     nonword = []
     target = []
     target_all = []
     with open('./Configures/nonword.txt','r') as f:
         rawnonword = f.read().split('\n')
     for i in rawnonword:
-        if ((len(i) >5) and (len(i)<11)):
+        if ((len(i) >5) and (len(i)<13)):
             nonword.append(i)
     with open('./Configures/targets.csv', 'r', newline='') as f:
         reader = csv.reader(f,delimiter=',')
@@ -83,7 +84,7 @@ def get_config():
         heading = next(reader) 
         for row in reader:
             this_task = {}
-            for i in range(1,3):
+            for i in range(1,4):
                     this_task[heading[i]] = int(row[i])
             configures.append(this_task)
     return configures
@@ -98,11 +99,14 @@ def get_target(stim_id,flag):
 
 configures = get_config() 
 
-def get_config_ratio(stim_id):
-    return configures[stim_id]["ratio"]
+def get_config_cen(stim_id):
+    return configures[stim_id]["center_is_prime(0yes,1no)"]
+
+def get_config_sur(stim_id):
+    return configures[stim_id]["cloud(-1_distratcor,0_none,1_prime)"]
 
 def get_display_time(stim_id):
-    return int(configures[stim_id]["time"])
+    return int(configures[stim_id]["display_time"])
 
 font_type = "Times New Roman"
 svg_width = 400

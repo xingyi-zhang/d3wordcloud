@@ -35,7 +35,7 @@ def hello_world():
 
 @app.route('/buildcloud/<trial>/')
 def buildcloud(trial):
-    if int(trial) > 76:
+    if int(trial) > 94:
         return 'done'
     # weather to build all cloud, 1 means yes
     buildAll = 1
@@ -88,11 +88,11 @@ def post_stim_gen():
 
 def get_prime(trial,num):
     pri_list = target_dict[trial]["cues"].copy()
+    if num ==1:
+        return [{'text':pri_list[0],'size':23,'fill': 'black','id':'central'}]
     prime_list = []
-    for i in range(0,num):
-        cue = random.choice(pri_list)
-        prime_list.append({'text':cue,'size':23,'fill': 'black', 'class':'p'})
-        pri_list.remove(cue)
+    for i in range(1,num+1):
+        prime_list.append({'text':pri_list[i],'size':23,'fill': 'black'})
     return prime_list
 
 # get the target
@@ -106,12 +106,17 @@ def get_distractor(trial,num):
     dis_list = []
     pri_list = target_dict[trial]["cues"]
     all_cue = cue_dict[trial]["cues"]
+    if num ==1:
+        dis = random.choice(whole_dict)
+        while ((dis in all_cue) or (dis in dis_list)):
+            dis = random.choice(whole_dict)
+        return [{'text':dis,'size':23,'fill': 'black','id':'central'}]
     for i in range(0,num):
         dis = random.choice(whole_dict)
         while ((dis in all_cue) or (dis in dis_list)):
             dis = random.choice(whole_dict)
         dis_list.append(dis)
-        distractor_list.append({'text': dis,'size':23,'fill': "black",'class':'np'})
+        distractor_list.append({'text': dis,'size':23,'fill': "black"})
     return distractor_list
 
 # record the data after each trial into database or csv
@@ -201,22 +206,26 @@ def post_landing():
 # get words that will be used in word cloud
 # actual ratio = 1/3 * ratio 
 def get_words(trial):
-    words = []
-    ratio = config.get_config_ratio(trial)
-    primes = get_prime(trial,10*ratio)
-    distractors = get_distractor(trial,30-10*ratio)
-    avail = primes + distractors
-    for i in range(0,30):
-        word = random.choice(avail)
-        words.append(word)
-        avail.remove(word)
-    return words
+    # sur is whether the surrounding words are primes. 1 being primes, 0 being none, and -1 being distractors 
+    # cen is whetehr the center word is prime. 1 being primes, 0 being not.
+    sur = config.get_config_sur(trial)
+    cen = config.get_config_cen(trial)
+    if cen == 1:
+        words = get_prime(trial,1)
+    else:
+        words = get_distractor(trial,1)
+    if sur == 1:
+        surrounding = get_prime(trial,24)
+    elif sur == -1:
+        surrounding = get_distractor(trial,24)
+    else:
+        surrounding = []
+    return words+surrounding
 
 if __name__=='__main__':
-    target_dict = config.get_dict()
+    target_dict = config.get_target_dict()
     whole_dict = config.get_whole_dict()
     cue_dict = config.get_cue_dict()
-    # config.get_target_dict()
     if len(sys.argv) != 3:
         print('Usage: {0} host port'.format(sys.argv[0]))
         print('  Example: {0} allen.mathcs.carleton.edu xxxx'.format(sys.argv[0]))
