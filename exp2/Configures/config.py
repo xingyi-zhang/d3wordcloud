@@ -108,10 +108,11 @@ def get_config_sur(stim_id):
 def get_display_time(stim_id):
     return int(configures[stim_id]["display_time"])
 
+
 font_type = "Times New Roman"
 svg_width = 400
 svg_height = 400
-trial_num = 72
+trial_num = 90
 prac_num = 5 
 
 def get_font_type():

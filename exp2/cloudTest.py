@@ -35,10 +35,10 @@ def hello_world():
 
 @app.route('/buildcloud/<trial>/')
 def buildcloud(trial):
-    if int(trial) > 94:
+    if int(trial) > 95:
         return 'done'
     # weather to build all cloud, 1 means yes
-    buildAll = 1
+    buildAll = 0
     return render_template('cloud.html',buildall = buildAll, trial_num = trial, size = config.get_size(),words = json.dumps(get_words(int(trial))),font_type = config.get_font_type())
 
 @app.route('/landing/')
@@ -58,6 +58,13 @@ def get_instruction_2():
     trial_index = int(flask.request.form['trial_index'])
     return render_template('instruction_2.html',turker_id = turker_id, order = order, trial_index=trial_index)
 
+@app.route('/instruction_3/',methods = ['POST'])
+def get_instruction_3():
+    turker_id = flask.request.form['turker_id']
+    order = json.loads(flask.request.form['order'])
+    trial_index = int(flask.request.form['trial_index'])
+    return render_template('instruction_3.html',turker_id = turker_id, order = order, trial_index=trial_index)
+
 # group indicate whether show a english word or nonword. 1 being nonword and 0 being word
 @app.route('/stim/',methods = ['POST'])
 def get_stim():
@@ -69,7 +76,7 @@ def get_stim():
     target = get_target(stim_id, group)
     with open('./Stim_checked/stim_'+str(stim_id)+'.html', 'r') as f:
         stim_html = f.read()
-    return render_template('stim.html',group = group, display_time = config.get_display_time(stim_id), target = target, stim_html = stim_html, trial_index = trial_index, stim_id = stim_id, turker_id = turker_id, order = order,config_env = config.get_config_env())
+    return render_template('stim.html',group = group, display_time = config.get_display_time(stim_id), target = target, stim_html = stim_html.replace('"','\\"'), trial_index = trial_index, stim_id = stim_id, turker_id = turker_id, order = order,config_env = config.get_config_env())
 
 @app.route('/completion/',methods = ['POST'])
 def get_completion():
@@ -131,18 +138,17 @@ def post_stim():
     correct = int(data["correct"])
     trial_index = int(data["trial_index"])
     display_time = int(data["display_time"])
-    ratio = int(data["ratio"])
     if not app.debug:
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,nonword,correct,trial_index,display_time,ratio)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index,display_time,ratio))
+        cursor.execute(sql.SQL(""" INSERT INTO {} (turker_id,stim_id,resp_time,resp,nonword,correct,trial_index,display_time)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""").format(sql.Identifier(results_database)),(turker_id,stim_id,resp_time,resp,group,correct,trial_index,display_time))
         connection.commit()
         cursor.close()
         connection.close()
     else:
         with open('./Results/pilot.csv','a',newline = '') as f:
-            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","correct","trial_index","display_time","ratio"]
+            fieldnames = ['turker_id',"stim_id","resp_time","resp","group","correct","trial_index","display_time"]
             writer = csv.DictWriter(f, fieldnames= fieldnames)
             # writer.writeheader()
             writer.writerow(data)

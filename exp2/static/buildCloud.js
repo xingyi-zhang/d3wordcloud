@@ -3,7 +3,7 @@ var a = d3.select('svg');
 var layout = d3.layout.cloud()
   .size(size)  
   .words(words)
-  .padding(4)
+  .padding(3)
   .rotate(0)
   .font(font_type)
   .fontSize(d => d.size)
