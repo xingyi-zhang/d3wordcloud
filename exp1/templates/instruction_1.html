@@ -18,14 +18,14 @@
 
             <p>For each question, you will be presented with a word cloud like the one below. Some of the words are
                 highlighted in <strong>black font</strong>. Your task is to click on the black word with the
-                <strong>larger font size as quickly as accurately</strong> as possible.</p>
+                <strong>larger font size as quickly and as accurately</strong> as possible.</p>
 
             <p>For instance, in the word cloud below, "<strong>ccesv</strong>" and "<strong>nnauncou</strong>" are
                 highlighted in black font. Of the two,
                 "<strong>ccesv</strong>" has the larger font size. Therefore, clicking "<strong>ccesv</strong>" would be
                 the correct answer.</p>
 
-            <p>After your response is registered, the page will be cleaned. Then you may click on the page to proceed 
+            <p>After your response is registered, the page will be cleared. Then you may click on the page to proceed 
                 to the next word cloud, at your pace.</p>
             </fieldset>
     </div>
@@ -34,7 +34,7 @@
     </div>
 
     
-    <div id="fscheck" style="text-align:center;"><p>It seems that your browser window is too small. Please put your browser in full screen.</p></div>
+    <div id="fscheck" style="text-align:center;"><p>It seems that your browser window is too small to properly view the images. Please put your browser in full screen.</p></div>
 
     <div style="text-align:center;">
         <p>When you are ready, click "Next" below.<br></p>
@@ -73,7 +73,7 @@
                 $('#fscheck').html('');
                 document.getElementById('next').disabled="";
             } else {
-                $('#fscheck').html('It seems that your browser window is too small. Please put your browser in full screen.');
+                $('#fscheck').html('It seems that your browser window is too small to view the images. Please put your browser in full screen.');
                 document.getElementById('next').disabled="disabled";
             }
         }

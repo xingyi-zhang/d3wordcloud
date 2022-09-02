@@ -14,11 +14,13 @@
             <legend>
                 <h2>Instructions</h2>
             </legend>
-            <p>Please put your browser in full screen and make sure you can see the full word cloud below </p>
+            <p>Please put your browser in full screen mode and make sure you can see the full word cloud below </p>
 
-            <p>For each trial, you will be presented with first a cross (+). Fixate on the cross and then either a word cloud like the one below 
+            <p>For each trial, you will be initially presented with a cross (+). Fixate your vision on the cross, which will be shortly replaced by
+                either a word cloud like the one below 
                 or a single word. If time allows, silently read the center word to yourself. You will only be shown the 
-                word or wordcloud for a limited time and the time will vary. Then you will be shown a target in capital letters. The target is either a 
+                word or word cloud for a brief time, and the time will vary. Then you will be shown a string of capital letters. 
+                This string will be either a 
                 common English word or a nonword. Your task is to press <strong>right arrow key or F key</strong> if the target is an English word, and 
                 press the <strong>left arrow key or J key</strong> if the target is not an English word. You should press the key
                 <strong>as quickly and as accurately</strong> as possible.
@@ -29,8 +31,8 @@
                 would be the correct answer.</p>
 
             <p>After your response is registered, you may press the space bar to proceed to the next trial, at your pace.
-                There will be 90 trials with a break in the middle. However, if you need to stop at any time, just don't press the space bar 
-                after you have responded.
+                There will be 90 trials with a break in the middle. However, if you need to pause at any time, you can wait to press the space bar
+                until you are ready.
             </p>
             </fieldset>
     </div>
@@ -47,7 +49,7 @@
     </div>
     
     <div style="text-align:center;">
-        <p>When you are ready, click "Next" below to do some practice.<br></p>
+        <p>When you are ready, click "Next" below to proceed to the practice round.<br></p>
             <button id="next" disabled="disabled">Next</button>
     </div>
     <form action="{{url_for('get_stim')}}" method = "POST" id="stim"></form>
