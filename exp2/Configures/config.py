@@ -100,7 +100,7 @@ def get_target(stim_id,flag):
 configures = get_config() 
 
 def get_config_cen(stim_id):
-    return configures[stim_id]["center_is_prime(0yes,1no)"]
+    return configures[stim_id]["center_is_prime(0no,1yes)"]
 
 def get_config_sur(stim_id):
     return configures[stim_id]["cloud(-1_distratcor,0_none,1_prime)"]

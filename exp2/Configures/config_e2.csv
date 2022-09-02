@@ -1,4 +1,4 @@
-trial,"cloud(-1_distratcor,0_none,1_prime)","center_is_prime(0yes,1no)",display_time,stim_id
+trial,"cloud(-1_distratcor,0_none,1_prime)","center_is_prime(0no,1yes)",display_time,stim_id
 1,-1,1,1000,0
 2,0,1,250,1
 3,1,0,100,2
